@@ -1,0 +1,27 @@
+server:
+  servlet:
+    context-path: /tretton37/elo/api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+elo:
+  ranking:
+    initial-rank: 1500
+    scaling: 400
+    k-factor:
+      min: 10
+      max: 40
+    games-threshold:
+      min: 10
+      max: 30
