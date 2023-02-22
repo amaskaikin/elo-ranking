@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  elo:
+    image: totonma/elo-ranking:latest
+    container_name: elo-ranking
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://elo-db:5432/elo-ranking
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+    ports:
+      - "8082:8080"
+    depends_on:
+      - elo-db
+
+  elo-db:
+    image: postgres:latest
+    container_name: elo-ranking-pgdb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: elo-ranking
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5442:5432"

@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://elo-db:5432/elo-ranking
     username: postgres
     password: admin
   jpa:
