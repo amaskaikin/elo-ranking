@@ -14,7 +14,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Elo Ranking Matchmaking management API")
                         .version("1.0.0")
-                        .description("API for ranking games and players")
+                        .description("API for ranking games and playerIds")
                 );
     }
 
@@ -31,6 +31,14 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("Player API")
                 .pathsToMatch("/player/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi tournamentApi() {
+        return GroupedOpenApi.builder()
+                .group("Tournament API")
+                .pathsToMatch("/tournament/**")
                 .build();
     }
 }

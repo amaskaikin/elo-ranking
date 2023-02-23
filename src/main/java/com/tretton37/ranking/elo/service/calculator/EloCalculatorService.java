@@ -1,12 +1,12 @@
-package com.tretton37.ranking.elo.service;
+package com.tretton37.ranking.elo.service.calculator;
 
 import com.tretton37.ranking.elo.dto.Player;
-import com.tretton37.ranking.elo.persistence.entity.GameResult;
-import lombok.Getter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -25,11 +25,18 @@ public class EloCalculatorService {
     @Value("${elo.ranking.games-threshold.min}")
     private Integer gamesThresholdMax;
 
-    public void updateEloRatings(Player playerA, Player playerB, GameResult gameResult) {
-        log.debug("updateEloRatings: Calculating new rating for PlayerA: {} and PlayerB: {}. " +
-                "GameResult: {}", playerA, playerB, gameResult);
+    private final CalculatorHelper calculatorHelper;
 
-        ActualScore actualScore = ActualScore.forResult(gameResult).calculate();
+    @Autowired
+    public EloCalculatorService(CalculatorHelper calculatorHelper) {
+        this.calculatorHelper = calculatorHelper;
+    }
+
+    public void updateEloRatings(Player playerA, Player playerB, UUID winnerId) {
+        log.debug("updateEloRatings: Calculating new rating for PlayerA: {} and PlayerB: {}. " +
+                "winner: {}", playerA, playerB, winnerId);
+
+        ActualScore actualScore = calculatorHelper.calculateActualScore(playerA, playerB, winnerId);
         double expectedScoreA = calculateExpectedScore(playerA.getRating(), playerB.getRating());
         double expectedScoreB = calculateExpectedScore(playerB.getRating(), playerA.getRating());
         log.debug("updateEloRatings: Actual score: {}, expected score for playerA: {}," +
@@ -85,48 +92,6 @@ public class EloCalculatorService {
         log.info("calculateNewEloRating: New Rating: {} for Player: {}", calculatedRating, player);
 
         return calculatedRating;
-    }
-
-    @ToString
-    @Getter
-    private static class ActualScore {
-        private double playerAScore;
-        private double playerBScore;
-
-        public static ActualScoreCalculator forResult(GameResult result) {
-            return new ActualScoreCalculator(result);
-        }
-
-        private static class ActualScoreCalculator {
-            private final GameResult result;
-
-            private final ActualScore actualScore;
-
-            private ActualScoreCalculator(GameResult result) {
-                this.result = result;
-                this.actualScore = new ActualScore();
-            }
-
-            public ActualScore calculate() {
-                switch (result) {
-                    case PLAYERA_WIN -> {
-                        this.actualScore.playerAScore = 1.0;
-                        this.actualScore.playerBScore = 0.0;
-                    }
-                    case PLAYERB_WIN -> {
-                        this.actualScore.playerAScore = 0.0;
-                        this.actualScore.playerBScore = 1.0;
-                    }
-                    case DRAW -> {
-                        this.actualScore.playerAScore = 0.5;
-                        this.actualScore.playerBScore = 1.5;
-                    }
-                    default -> throw new RuntimeException("Unknown game result: " + result);
-                }
-
-                return this.actualScore;
-            }
-        }
     }
 }
 

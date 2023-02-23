@@ -4,9 +4,11 @@ import com.tretton37.ranking.elo.dto.Game;
 import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.dto.SearchCriteria;
 import com.tretton37.ranking.elo.dto.mapper.PersistenceMapper;
+import com.tretton37.ranking.elo.errorhandling.EntityNotFoundException;
+import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
 import com.tretton37.ranking.elo.persistence.GameRepository;
 import com.tretton37.ranking.elo.persistence.entity.GameEntity;
-import com.tretton37.ranking.elo.persistence.entity.GameResult;
+import com.tretton37.ranking.elo.service.calculator.EloCalculatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.springframework.data.jpa.domain.Specification.allOf;
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -55,56 +56,57 @@ public class GameService {
                 .map(mapper::entityToDto);
     }
 
+    public Game findGameById(UUID id) {
+        return mapper.entityToDto(gameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        ErrorDetails.ENTITY_NOT_FOUND, "Game is not found by id: " + id)));
+    }
+
     public Game registerGame(Game game) {
-        Player playerA = getOrLoadPlayer(game.getPlayerA());
-        Player playerB = getOrLoadPlayer(game.getPlayerB());
+        Player playerA = playerService.findById(game.getPlayerRefA().getId());
+        Player playerB = playerService.findById(game.getPlayerRefB().getId());
 
-        eloCalculatorService.updateEloRatings(playerA, playerB, game.getResult());
+        eloCalculatorService.updateEloRatings(playerA, playerB, game.getWinnerId());
         playerService.deltaUpdateBatch(List.of(playerA, playerB));
-
-        game.setPlayerA(playerA);
-        game.setPlayerB(playerB);
         game.setPlayedWhen(LocalDateTime.now());
 
-        return mapper.entityToDto(
-                gameRepository.save(mapper.dtoToEntity(game))
-        );
-    }
+        Game created = mapper.entityToDto(gameRepository.save(mapper.dtoToEntity(game)));
+        created.setPlayerRefA(playerService.convertDtoToReference(playerA));
+        created.setPlayerRefB(playerService.convertDtoToReference(playerB));
 
-    private Player getOrLoadPlayer(Player player) {
-        if (needFetchPlayerDetails(Objects.requireNonNull(player))) {
-            return playerService.findById(player.getId());
-        }
-
-        return player;
-    }
-
-    private boolean needFetchPlayerDetails(Player player) {
-       return Stream.of(player.getRating(), player.getGamesPlayed())
-               .allMatch(Objects::isNull);
+        return created;
     }
 
     private Specification<GameEntity> buildFilterSpecification(final SearchCriteria searchCriteria) {
-        return where(allOf(Objects.requireNonNullElse(searchCriteria.players(), Collections.<UUID>emptyList())
+        return where(allOf(Objects.requireNonNullElse(searchCriteria.playerIds(), Collections.<UUID>emptyList())
                         .stream()
                         .map(this::playerIs)
                         .collect(Collectors.toSet())
                 )
-                .and(resultIs(searchCriteria.result()))
+                .and(winnerIs(searchCriteria.winnerId()))
+                .and(tournamentIs(searchCriteria.tournamentId()))
         );
     }
 
     private Specification<GameEntity> playerIs(UUID id) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.or(
-                criteriaBuilder.equal(root.get("playera_id"), id.toString()),
-                criteriaBuilder.equal(root.get("playerb_id"), id.toString())
+                criteriaBuilder.equal(root.get("playerA").get("id"), id),
+                criteriaBuilder.equal(root.get("playerB").get("id"), id)
         );
     }
 
-    private Specification<GameEntity> resultIs(GameResult result) {
-        if (result == null) {
+    private Specification<GameEntity> winnerIs(UUID winnerId) {
+        if (winnerId == null) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("result"), result.name());
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("winnerId"), winnerId);
+    }
+
+    private Specification<GameEntity> tournamentIs(UUID tournamentId) {
+        if (tournamentId == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("tournament").get("id"), tournamentId);
     }
 }

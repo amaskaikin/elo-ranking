@@ -1,5 +1,6 @@
 package com.tretton37.ranking.elo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Data
 @Builder
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Player {
     private UUID id;
 

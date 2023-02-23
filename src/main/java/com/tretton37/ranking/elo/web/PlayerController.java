@@ -13,11 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +46,7 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @Operation(summary = "List players")
+    @Operation(summary = "List playerIds")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pageable content of Players"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -54,6 +56,7 @@ public class PlayerController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
+    @PageableAsQueryParam
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public PageResponse<Player> getPlayers(@PageableDefault(size = 30)
                                            @SortDefault.SortDefaults({
@@ -64,9 +67,9 @@ public class PlayerController {
         return new PageResponse<>(playerService.getPlayers(page));
     }
 
-    @Operation(summary = "Find players by name")
+    @Operation(summary = "Find playerIds by name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Array of players"),
+            @ApiResponse(responseCode = "200", description = "Array of playerIds"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
@@ -114,11 +117,8 @@ public class PlayerController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Created Player"),
+            @ApiResponse(responseCode = "201", description = "Created Player"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ErrorResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Player not found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -126,10 +126,20 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Player createPlayer(@Valid @RequestBody Player player) {
-        return playerService.create(player);
+    public ResponseEntity<Player> createPlayer(@Valid @RequestBody Player player) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(playerService.create(player));
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Players are successfully created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))})
+    })
     @PostMapping(value = "/create/bulk", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> bulkCreatePlayers(@Valid @RequestBody Collection<Player> players) {
         playerService.bulkCreate(players);

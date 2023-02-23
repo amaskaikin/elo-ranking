@@ -6,7 +6,7 @@ spring:
   datasource:
     url: jdbc:postgresql://elo-db:5432/elo-ranking
     username: postgres
-    password: admin
+    password: F!T#cD64Z5eh
   jpa:
     properties:
       hibernate:

@@ -6,26 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Game {
+public class PlayerRef {
+    @NotNull
     private UUID id;
-
-    @NotNull
-    private PlayerRef playerRefA;
-
-    @NotNull
-    private PlayerRef playerRefB;
-
-    @NotNull
-    private Tournament tournamentRef;
-
-    private UUID winnerId;
-
-    private LocalDateTime playedWhen;
+    private String name;
+    private Integer rating;
 }

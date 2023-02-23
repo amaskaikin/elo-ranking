@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tretton37.ranking.elo.dto.Player;
+import com.tretton37.ranking.elo.dto.PlayerRef;
 import com.tretton37.ranking.elo.dto.mapper.PlayerMapper;
 import com.tretton37.ranking.elo.errorhandling.EntityAlreadyExistsException;
 import com.tretton37.ranking.elo.errorhandling.EntityNotFoundException;
@@ -91,6 +92,14 @@ public class PlayerService {
                         mergeForUpdate(getById(id), playerMapper.dtoToEntity(player))
                 )
         );
+    }
+
+    public PlayerRef convertDtoToReference(Player dto) {
+        return PlayerRef.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .rating(dto.getRating())
+                .build();
     }
 
     private PlayerEntity getById(UUID uuid) {

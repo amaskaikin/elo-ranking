@@ -1,7 +1,14 @@
 package com.tretton37.ranking.elo.persistence.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,13 +25,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "game")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GameEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "playera_id", nullable = false)
     private PlayerEntity playerA;
 
@@ -32,8 +38,11 @@ public class GameEntity {
     @JoinColumn(name = "playerb_id", nullable = false)
     private PlayerEntity playerB;
 
-    @Enumerated(EnumType.STRING)
-    private GameResult result;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id", nullable = false)
+    private TournamentEntity tournament;
+
+    private UUID winnerId;
 
     private LocalDateTime playedWhen;
 
