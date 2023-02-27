@@ -11,3 +11,15 @@ logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.tretton37.ranking.elo: DEBUG
+
+elo:
+  ranking:
+    initial-rank: 1500
+    scaling: 400
+    k-factor:
+      min: 10
+      max: 40
+    games-threshold:
+      min: 10
+      max: 30
