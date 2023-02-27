@@ -46,7 +46,7 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @Operation(summary = "List playerIds")
+    @Operation(summary = "List players")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pageable content of Players"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -67,9 +67,9 @@ public class PlayerController {
         return new PageResponse<>(playerService.getPlayers(page));
     }
 
-    @Operation(summary = "Find playerIds by name")
+    @Operation(summary = "Find players by name")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Array of playerIds"),
+            @ApiResponse(responseCode = "200", description = "Array of players"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),

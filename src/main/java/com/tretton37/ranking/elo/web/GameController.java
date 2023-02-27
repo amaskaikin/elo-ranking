@@ -7,11 +7,13 @@ import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +73,7 @@ public class GameController {
     @PageableAsQueryParam
     @PostMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     public PageResponse<Game> findGames(@PageableDefault(size = 30, sort = "playedWhen",
-            direction = Sort.Direction.DESC) Pageable page,
+            direction = Sort.Direction.DESC) @ParameterObject Pageable page,
                                         @Valid @RequestBody SearchCriteria criteria) {
         log.debug("Request /find: criteria={}, page={}", criteria, page);
         return new PageResponse<>(gameService.findGames(criteria, page));
