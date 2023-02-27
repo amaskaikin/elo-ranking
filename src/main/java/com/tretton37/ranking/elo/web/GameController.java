@@ -109,8 +109,29 @@ public class GameController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Game> createGame(@Valid @RequestBody Game game) {
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Game> createGame(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                    @ExampleObject(
+                            name = "Create game request",
+                            description = "To register the game only reference ids are required",
+                            value = """
+                                    {
+                                        "playerRefA": {
+                                            "id": "3c207529-3c2e-4f2b-acb3-ceedd7a9fd00"
+                                        },
+                                        "playerRefB": {
+                                            "id": "8f1c655c-c81c-429d-ba36-94839b734d73"
+                                        },
+                                        "tournamentRef": {
+                                            "uuid": "52d24f84-72c6-4d8b-8c4e-7ae890b3826c"
+                                        },
+                                        "winnerId": "3c207529-3c2e-4f2b-acb3-ceedd7a9fd00"
+                                    }
+                                    """)
+            }))
+            @Valid @RequestBody Game game) {
         log.info("registerGame: {}", game);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(gameService.registerGame(game));

@@ -4,6 +4,7 @@ import com.tretton37.ranking.elo.dto.Tournament;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.TournamentService;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -45,7 +46,18 @@ public class TournamentController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @PostMapping(value = "create")
-    public ResponseEntity<Tournament> createTournament(@Valid @RequestBody Tournament tournamentDto) {
+    public ResponseEntity<Tournament> createTournament(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                    @ExampleObject(
+                            name = "Create tournament request",
+                            description = "Only tournament name is required for creation",
+                            value = """
+                                    {
+                                      "name": "Stockholm"
+                                    }
+                                    """)
+            }))
+            @Valid @RequestBody Tournament tournamentDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(tournamentService.createTournament(tournamentDto));
     }

@@ -5,8 +5,8 @@ import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -111,8 +111,23 @@ public class PlayerController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Player updatePlayer(@PathVariable UUID id, @RequestBody Player player) {
+    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Player updatePlayer(@PathVariable UUID id,
+                               @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                       content = @Content(examples = {
+                                               @ExampleObject(
+                                                       name = "Update player request",
+                                                       description = "Delta update is supported: only fields specified in request are updated",
+                                                       value = """
+                                                               {
+                                                                  "name": "Name Mod",
+                                                                  "rating": 1501
+                                                               }
+                                                               """
+                                               )
+                                       }))
+                               @RequestBody Player player) {
         return playerService.deltaUpdate(id, player);
     }
 
@@ -125,8 +140,21 @@ public class PlayerController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Player> createPlayer(@Valid @RequestBody Player player) {
+    @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Player> createPlayer(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                    @ExampleObject(
+                            name = "Create player request",
+                            description = "`UUID`, `rating`, `registeredWhen` and `gamesPlayed` " +
+                                    "fields are populated automatically",
+                            value = """
+                                    {
+                                      "name": "Name Surname"
+                                    }
+                                    """)
+            }))
+            @Valid @RequestBody Player player) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(playerService.create(player));
     }
@@ -140,8 +168,26 @@ public class PlayerController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @PostMapping(value = "/create/bulk", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> bulkCreatePlayers(@Valid @RequestBody Collection<Player> players) {
+    @PostMapping(value = "/create/bulk", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> bulkCreatePlayers(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                    @ExampleObject(
+                            name = "Bulk create player request",
+                            description = "`UUID`, `rating`, `registeredWhen` and `gamesPlayed` " +
+                                    "fields are populated automatically",
+                            value = """
+                                    [
+                                        {
+                                            "name": "NameA SurnameA"
+                                        },
+                                        {
+                                            "name": "NameB SurnameB"
+                                        }
+                                    ]
+                                    """)
+            }))
+            @Valid @RequestBody Collection<Player> players) {
         playerService.bulkCreate(players);
 
         return ResponseEntity.ok().build();
