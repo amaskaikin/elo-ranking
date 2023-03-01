@@ -25,7 +25,18 @@ public class Game {
     @NotNull
     private Tournament tournamentRef;
 
-    private UUID winnerId;
+    @NotNull
+    private GameResult gameResult;
 
     private LocalDateTime playedWhen;
+
+    @Data
+    @Builder
+    @ToString
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class GameResult {
+        private Integer playerAScore;
+        private Integer playerBScore;
+        private UUID winnerId;
+    }
 }

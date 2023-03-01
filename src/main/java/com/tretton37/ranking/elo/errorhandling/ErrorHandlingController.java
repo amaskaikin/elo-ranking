@@ -43,10 +43,12 @@ public class ErrorHandlingController {
 
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageConversionException(HttpMessageConversionException e) {
-        log.error(e.getMessage(), e);
+        return badRequest(e);
+    }
 
-        return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ErrorDetails.BAD_REQUEST, e.getMessage()));
+    @ExceptionHandler(RequestConsistencyException.class)
+    public ResponseEntity<ErrorResponse> handleRequestConsistencyException(RequestConsistencyException e) {
+        return badRequest(e);
     }
 
     @ExceptionHandler(Exception.class)
@@ -54,5 +56,12 @@ public class ErrorHandlingController {
         log.error(e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse(ErrorDetails.INTERNAL_ERROR, e.getMessage()));
+    }
+
+    private ResponseEntity<ErrorResponse> badRequest(Exception e) {
+        log.error(e.getMessage(), e);
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(ErrorDetails.BAD_REQUEST, e.getMessage()));
     }
 }

@@ -5,6 +5,7 @@ import com.tretton37.ranking.elo.dto.PageResponse;
 import com.tretton37.ranking.elo.dto.SearchCriteria;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.GameService;
+import com.tretton37.ranking.elo.service.validator.RequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -36,10 +37,13 @@ import java.util.UUID;
 @RequestMapping("/game")
 public class GameController {
     private final GameService gameService;
+    private final RequestValidator<Game> gameRequestValidator;
 
     @Autowired
-    public GameController(GameService gameService) {
+    public GameController(GameService gameService,
+                          RequestValidator<Game> gameRequestValidator) {
         this.gameService = gameService;
+        this.gameRequestValidator = gameRequestValidator;
     }
 
     @Operation(summary = "List games")
@@ -119,20 +123,26 @@ public class GameController {
                             value = """
                                     {
                                         "playerRefA": {
-                                            "id": "3c207529-3c2e-4f2b-acb3-ceedd7a9fd00"
+                                            "id": "bd9e0e71-10b5-4e25-b280-0b89b14832fa"
                                         },
                                         "playerRefB": {
-                                            "id": "8f1c655c-c81c-429d-ba36-94839b734d73"
+                                            "id": "3d259076-6f85-4368-9ef3-b9256d5d8205"
                                         },
                                         "tournamentRef": {
-                                            "uuid": "52d24f84-72c6-4d8b-8c4e-7ae890b3826c"
+                                            "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                         },
-                                        "winnerId": "3c207529-3c2e-4f2b-acb3-ceedd7a9fd00"
+                                        "gameResult": {
+                                            "playerAScore": 8,
+                                            "playerBScore": 11,
+                                            "winnerId": "3d259076-6f85-4368-9ef3-b9256d5d8205"
+                                        }
                                     }
                                     """)
             }))
             @Valid @RequestBody Game game) {
         log.info("registerGame: {}", game);
+        gameRequestValidator.validate(game);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(gameService.registerGame(game));
     }

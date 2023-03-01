@@ -10,10 +10,13 @@ import org.springframework.stereotype.Component;
 public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
 
     private final GameRepository gameRepository;
+    private final TournamentMapper tournamentMapper;
 
     @Autowired
-    public PlayerMapper(GameRepository gameRepository) {
+    public PlayerMapper(GameRepository gameRepository,
+                        TournamentMapper tournamentMapper) {
         this.gameRepository = gameRepository;
+        this.tournamentMapper = tournamentMapper;
     }
 
     @Override
@@ -21,9 +24,11 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
         return Player.builder()
                 .id(playerEntity.getId())
                 .name(playerEntity.getName())
+                .tournamentRef(tournamentMapper.entityToDto(playerEntity.getTournament()))
                 .rating(playerEntity.getRating())
                 .registeredWhen(playerEntity.getRegisteredWhen())
                 .gamesPlayed(gameRepository.countByPlayer(playerEntity.getId()))
+                .reachedHighRating(playerEntity.isReachedHighRating())
                 .build();
     }
 
@@ -32,8 +37,10 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
         return PlayerEntity.builder()
                 .id(player.getId())
                 .name(player.getName())
+                .tournament(tournamentMapper.dtoToEntity(player.getTournamentRef()))
                 .rating(player.getRating())
                 .registeredWhen(player.getRegisteredWhen())
+                .reachedHighRating(player.isReachedHighRating())
                 .build();
     }
 }

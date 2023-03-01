@@ -67,7 +67,7 @@ public class PlayerController {
         return new PageResponse<>(playerService.getPlayers(page));
     }
 
-    @Operation(summary = "Find players by name")
+    @Operation(summary = "Find players by specified criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of players"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
@@ -78,8 +78,9 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Player> getPlayersByName(@RequestParam String name) {
-        return playerService.findPlayersByNameLike(name);
+    public Collection<Player> getPlayersByName(@RequestParam(required = false) String name,
+                                               @RequestParam(required = false) UUID tournamentId) {
+        return playerService.find(name, tournamentId);
     }
 
     @ApiResponses(value = {
@@ -150,7 +151,10 @@ public class PlayerController {
                                     "fields are populated automatically",
                             value = """
                                     {
-                                      "name": "Name Surname"
+                                      "name": "Name Surname",
+                                      "tournamentRef": {
+                                          "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
+                                      }
                                     }
                                     """)
             }))
@@ -179,10 +183,16 @@ public class PlayerController {
                             value = """
                                     [
                                         {
-                                            "name": "NameA SurnameA"
+                                            "name": "NameA SurnameA",
+                                            "tournamentRef": {
+                                                "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
+                                            }
                                         },
                                         {
-                                            "name": "NameB SurnameB"
+                                            "name": "NameB SurnameB",
+                                            "tournamentRef": {
+                                                "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
+                                            }
                                         }
                                     ]
                                     """)

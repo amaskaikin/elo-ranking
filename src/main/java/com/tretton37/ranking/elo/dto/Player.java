@@ -1,7 +1,9 @@
 package com.tretton37.ranking.elo.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -19,9 +21,15 @@ public class Player {
     @NotEmpty
     private String name;
 
+    @NotNull
+    private Tournament tournamentRef;
+
     private Integer rating;
 
     private LocalDateTime registeredWhen;
 
     private Integer gamesPlayed;
+
+    @JsonIgnore
+    private boolean reachedHighRating;
 }

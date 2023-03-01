@@ -8,11 +8,17 @@ import org.springframework.stereotype.Component;
 public class TournamentMapper implements PersistenceMapper<Tournament, TournamentEntity> {
     @Override
     public Tournament entityToDto(TournamentEntity tournamentEntity) {
+        if (tournamentEntity == null) {
+            return null;
+        }
         return new Tournament(tournamentEntity.getId(), tournamentEntity.getName());
     }
 
     @Override
     public TournamentEntity dtoToEntity(Tournament tournament) {
-        return new TournamentEntity(tournament.uuid(), tournament.name());
+        if (tournament == null) {
+            return null;
+        }
+        return new TournamentEntity(tournament.id(), tournament.name());
     }
 }

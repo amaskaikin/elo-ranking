@@ -22,10 +22,8 @@ logging:
 elo:
   ranking:
     initial-rank: ${APP_ELO_INITIAL_RANK}
-    scaling: ${APP_ELO_SCALING}
+    threshold-rank: ${APP_ELO_THRESHOLD_RANK}
+    games-threshold: ${APP_GAMES_THRESHOLD}
     k-factor:
       min: ${APP_K_FACTOR_MIN}
       max: ${APP_K_FACTOR_MAX}
-    games-threshold:
-      min: ${APP_GAMES_THRESHOLD_MIN}
-      max: ${APP_GAMES_THRESHOLD_MAX}

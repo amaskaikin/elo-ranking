@@ -65,8 +65,10 @@ public class GameService {
     public Game registerGame(Game game) {
         Player playerA = playerService.findById(game.getPlayerRefA().getId());
         Player playerB = playerService.findById(game.getPlayerRefB().getId());
+        calculateWinner(game);
 
-        eloCalculatorService.updateEloRatings(playerA, playerB, game.getWinnerId());
+        eloCalculatorService.updateEloRatings(playerA, playerB, game);
+
         playerService.deltaUpdateBatch(List.of(playerA, playerB));
         game.setPlayedWhen(LocalDateTime.now());
 
@@ -75,6 +77,22 @@ public class GameService {
         created.setPlayerRefB(playerService.convertDtoToReference(playerB));
 
         return created;
+    }
+
+    private void calculateWinner(Game game) {
+        Game.GameResult result = game.getGameResult();
+        if (result.getWinnerId() != null || result.getPlayerAScore().equals(result.getPlayerBScore())) {
+            log.trace("calculateWinner: Winner calculation is not required for Result: {}", result);
+            return;
+        }
+        if (result.getPlayerAScore() > result.getPlayerBScore()) {
+            log.trace("calculateWinner: Winner is PlayerA");
+            result.setWinnerId(game.getPlayerRefA().getId());
+        }
+        if (result.getPlayerBScore() > result.getPlayerAScore()) {
+            log.trace("calculateWinner: Winner is PlayerB");
+            result.setWinnerId(game.getPlayerRefB().getId());
+        }
     }
 
     private Specification<GameEntity> buildFilterSpecification(final SearchCriteria searchCriteria) {
@@ -99,7 +117,9 @@ public class GameService {
         if (winnerId == null) {
             return null;
         }
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("winnerId"), winnerId);
+        return (root, query, criteriaBuilder) ->
+            criteriaBuilder.equal(root.join("gameResult")
+                    .get("winnerId"), winnerId);
     }
 
     private Specification<GameEntity> tournamentIs(UUID tournamentId) {
