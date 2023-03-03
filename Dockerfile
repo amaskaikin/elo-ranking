@@ -6,5 +6,4 @@ WORKDIR $APP_HOME
 
 COPY build/libs/elo-0.0.1-SNAPSHOT.jar $APP_HOME/elo-0.0.1.jar
 EXPOSE 8080
-EXPOSE 8443
 ENTRYPOINT exec java $JAVA_OPTS -jar elo-0.0.1.jar

@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: /tretton37/elo/api
+  forward-headers-strategy: framework
 
 spring:
   datasource:
