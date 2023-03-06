@@ -137,6 +137,9 @@ public class PlayerController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "409", description = "Player already exists",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
@@ -152,6 +155,7 @@ public class PlayerController {
                             value = """
                                     {
                                       "name": "Name Surname",
+                                      "email": "name.surname@mail.test",
                                       "tournamentRef": {
                                           "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                       }

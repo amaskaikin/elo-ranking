@@ -63,9 +63,9 @@ public class PlayerService {
     }
 
     public Player create(Player player) {
-        if (playerRepository.findByName(player.getName()) != null) {
+        if (playerRepository.findByEmail(player.getEmail()) != null) {
             throw new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,
-                    "Player with the same name already exists");
+                    "Player with the same Email address already exists");
         }
         enrichPlayerBeforeSave(player);
 

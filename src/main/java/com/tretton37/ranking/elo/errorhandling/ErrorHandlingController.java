@@ -22,7 +22,7 @@ public class ErrorHandlingController {
     @ExceptionHandler(EntityAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExistsException(EntityAlreadyExistsException e) {
         log.error(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse(e.getErrorDetails(), e.getMessage()));
     }
 

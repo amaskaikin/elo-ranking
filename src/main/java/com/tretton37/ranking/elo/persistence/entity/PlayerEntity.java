@@ -1,6 +1,7 @@
 package com.tretton37.ranking.elo.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,13 +24,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "player")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlayerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
+
+    @Column(unique = true)
+    private String email;
+
+    private String profileImage;
 
     private Integer rating;
 

@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<PlayerEntity, UUID>, JpaSpecificationExecutor<PlayerEntity> {
-    PlayerEntity findByName(String name);
+    PlayerEntity findByEmail(String email);
 }
