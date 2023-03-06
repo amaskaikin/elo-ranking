@@ -3,6 +3,9 @@ server:
     context-path: /tretton37/elo/api
   forward-headers-strategy: framework
 
+auth0:
+  audience: https://ping-pong-king.duckdns.org
+
 spring:
   datasource:
     url: ${DB_URL}
@@ -15,6 +18,11 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-rpjs656325jw0c13.us.auth0.com/
 
 logging:
   level:
