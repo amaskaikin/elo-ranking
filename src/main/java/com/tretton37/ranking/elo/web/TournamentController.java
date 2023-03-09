@@ -45,7 +45,8 @@ public class TournamentController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @PostMapping(value = "create")
+    @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Tournament> createTournament(@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {
                     @ExampleObject(
@@ -71,7 +72,7 @@ public class TournamentController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<Tournament> getAllTournaments() {
         return tournamentService.getAllTournaments();
     }
@@ -88,7 +89,7 @@ public class TournamentController {
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament getTournament(@PathVariable UUID id) {
         return tournamentService.getTournamentById(id);
     }
