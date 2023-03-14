@@ -1,4 +1,4 @@
-FROM amazoncorretto:17.0.6-alpine
+FROM bellsoft/liberica-openjdk-alpine:17.0.6-10
 
 ENV APP_HOME=/app
 ENV JAVA_OPTS="-Xms128m -Xmx256m"
