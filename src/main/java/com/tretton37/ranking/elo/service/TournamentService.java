@@ -7,6 +7,7 @@ import com.tretton37.ranking.elo.errorhandling.EntityNotFoundException;
 import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
 import com.tretton37.ranking.elo.persistence.TournamentRepository;
 import com.tretton37.ranking.elo.persistence.entity.TournamentEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TournamentService {
 
     private final TournamentRepository tournamentRepository;
@@ -42,10 +44,15 @@ public class TournamentService {
     }
 
     public Tournament createTournament(Tournament tournament) {
-        if (tournamentRepository.findByName(tournament.name()) != null) {
+        if (tournamentRepository.findByName(tournament.getName()) != null) {
             throw new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,
                     "Tournament with the same name already exists");
         }
         return mapper.entityToDto(tournamentRepository.save(mapper.dtoToEntity(tournament)));
+    }
+
+    public void deleteTournament(UUID id) {
+        log.info("deleteTournament: Deleting tournament: {}", id);
+        tournamentRepository.deleteById(id);
     }
 }

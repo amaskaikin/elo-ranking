@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -92,5 +93,20 @@ public class TournamentController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Tournament getTournament(@PathVariable UUID id) {
         return tournamentService.getTournamentById(id);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tournament successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Tournament not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteTournament(@PathVariable UUID id) {
+        tournamentService.deleteTournament(id);
+        return ResponseEntity.ok().build();
     }
 }

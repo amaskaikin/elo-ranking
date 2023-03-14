@@ -1,6 +1,5 @@
 package com.tretton37.ranking.elo.persistence.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

@@ -5,7 +5,6 @@ import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
 import com.tretton37.ranking.elo.errorhandling.RequestConsistencyException;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Component

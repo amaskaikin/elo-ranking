@@ -1,8 +1,10 @@
 package com.tretton37.ranking.elo.dto.mapper;
 
 import com.tretton37.ranking.elo.dto.Player;
+import com.tretton37.ranking.elo.dto.Tournament;
 import com.tretton37.ranking.elo.persistence.GameRepository;
 import com.tretton37.ranking.elo.persistence.entity.PlayerEntity;
+import com.tretton37.ranking.elo.persistence.entity.TournamentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,13 +12,16 @@ import org.springframework.stereotype.Component;
 public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
 
     private final GameRepository gameRepository;
-    private final TournamentMapper tournamentMapper;
+    private final PersistenceMapper<Tournament, TournamentEntity> tournamentMapper;
+    private final JsonNullableMapper jsonNullableMapper;
 
     @Autowired
     public PlayerMapper(GameRepository gameRepository,
-                        TournamentMapper tournamentMapper) {
+                        PersistenceMapper<Tournament, TournamentEntity> tournamentMapper,
+                        JsonNullableMapper jsonNullableMapper) {
         this.gameRepository = gameRepository;
         this.tournamentMapper = tournamentMapper;
+        this.jsonNullableMapper = jsonNullableMapper;
     }
 
     @Override
@@ -25,7 +30,7 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
                 .id(playerEntity.getId())
                 .name(playerEntity.getName())
                 .email(playerEntity.getEmail())
-                .profileImage(playerEntity.getProfileImage())
+                .profileImage(jsonNullableMapper.wrap(playerEntity.getProfileImage()))
                 .tournamentRef(tournamentMapper.entityToDto(playerEntity.getTournament()))
                 .rating(playerEntity.getRating())
                 .registeredWhen(playerEntity.getRegisteredWhen())
@@ -40,7 +45,7 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
                 .id(player.getId())
                 .name(player.getName())
                 .email(player.getEmail())
-                .profileImage(player.getProfileImage())
+                .profileImage(jsonNullableMapper.unwrap(player.getProfileImage()))
                 .tournament(tournamentMapper.dtoToEntity(player.getTournamentRef()))
                 .rating(player.getRating())
                 .registeredWhen(player.getRegisteredWhen())

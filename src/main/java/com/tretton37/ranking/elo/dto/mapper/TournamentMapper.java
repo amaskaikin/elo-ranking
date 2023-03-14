@@ -19,6 +19,6 @@ public class TournamentMapper implements PersistenceMapper<Tournament, Tournamen
         if (tournament == null) {
             return null;
         }
-        return new TournamentEntity(tournament.id(), tournament.name());
+        return new TournamentEntity(tournament.getId(), tournament.getName());
     }
 }

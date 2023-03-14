@@ -1,22 +1,21 @@
-package com.tretton37.ranking.elo.service;
+package com.tretton37.ranking.elo.service.player;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.dto.PlayerRef;
 import com.tretton37.ranking.elo.dto.mapper.PlayerMapper;
+import com.tretton37.ranking.elo.dto.search.PlayerSearchCriteria;
 import com.tretton37.ranking.elo.errorhandling.EntityAlreadyExistsException;
 import com.tretton37.ranking.elo.errorhandling.EntityNotFoundException;
 import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
 import com.tretton37.ranking.elo.persistence.PlayerRepository;
 import com.tretton37.ranking.elo.persistence.entity.PlayerEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,8 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @Slf4j
@@ -51,8 +48,8 @@ public class PlayerService {
                 .map(playerMapper::entityToDto);
     }
 
-    public Collection<Player> find(String name, UUID tournamentId) {
-        return playerRepository.findAll(buildFilterSpecification(name, tournamentId))
+    public Collection<Player> find(PlayerSearchCriteria searchCriteria) {
+        return playerRepository.findAll(PlayerSpecificationBuilder.forCriteria(searchCriteria).build())
                 .stream()
                 .map(playerMapper::entityToDto)
                 .collect(Collectors.toList());
@@ -67,7 +64,7 @@ public class PlayerService {
             throw new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,
                     "Player with the same Email address already exists");
         }
-        enrichPlayerBeforeSave(player);
+        populateInitialParameters(player);
 
         return playerMapper.entityToDto(
                 playerRepository.save(playerMapper.dtoToEntity(player))
@@ -77,7 +74,7 @@ public class PlayerService {
     public void bulkCreate(Collection<Player> players) {
         playerRepository.saveAll(players.stream()
                 .map(p -> {
-                    enrichPlayerBeforeSave(p);
+                    populateInitialParameters(p);
                     return playerMapper.dtoToEntity(p);
                 })
                 .collect(Collectors.toList())
@@ -103,6 +100,11 @@ public class PlayerService {
         );
     }
 
+    public void delete(UUID id) {
+        log.info("delete: Deleting player: {}", id);
+        playerRepository.deleteById(id);
+    }
+
     public PlayerRef convertDtoToReference(Player dto) {
         return PlayerRef.builder()
                 .id(dto.getId())
@@ -125,30 +127,8 @@ public class PlayerService {
         }
     }
 
-    private void enrichPlayerBeforeSave(Player player) {
+    private void populateInitialParameters(Player player) {
         player.setRating(initialRank);
         player.setRegisteredWhen(LocalDateTime.now());
-    }
-
-    private Specification<PlayerEntity> buildFilterSpecification(final String name, final UUID tournamentId) {
-        return where(tournamentIs(tournamentId))
-                .and(nameLike(name));
-    }
-
-    private Specification<PlayerEntity> tournamentIs(final UUID tournamentId) {
-        if (tournamentId == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("tournament").get("id"), tournamentId);
-    }
-
-    private Specification<PlayerEntity> nameLike(final String name) {
-        if (StringUtils.isEmpty(name)) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("name").as(String.class)),
-                        "%" + name.toLowerCase() + "%");
     }
 }

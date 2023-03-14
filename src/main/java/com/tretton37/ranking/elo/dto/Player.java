@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class Player {
     @NotEmpty
     private String email;
 
-    private String profileImage;
+    private JsonNullable<String> profileImage;
 
     @NotNull
     @JsonMerge

@@ -19,6 +19,8 @@ public class PlayerRefMapper implements PersistenceMapper<PlayerRef, PlayerEntit
     public PlayerEntity dtoToEntity(PlayerRef playerRef) {
         return PlayerEntity.builder()
                 .id(playerRef.getId())
+                .name(playerRef.getName())
+                .rating(playerRef.getRating())
                 .build();
     }
 }

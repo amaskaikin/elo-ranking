@@ -2,9 +2,9 @@ package com.tretton37.ranking.elo.web;
 
 import com.tretton37.ranking.elo.dto.Game;
 import com.tretton37.ranking.elo.dto.PageResponse;
-import com.tretton37.ranking.elo.dto.SearchCriteria;
+import com.tretton37.ranking.elo.dto.search.GameSearchCriteria;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
-import com.tretton37.ranking.elo.service.GameService;
+import com.tretton37.ranking.elo.service.game.GameService;
 import com.tretton37.ranking.elo.service.validator.RequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +23,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,10 +76,10 @@ public class GameController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @PageableAsQueryParam
-    @PostMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     public PageResponse<Game> findGames(@PageableDefault(size = 30, sort = "playedWhen",
             direction = Sort.Direction.DESC) @ParameterObject Pageable page,
-                                        @Valid @RequestBody SearchCriteria criteria) {
+                                        @ParameterObject GameSearchCriteria criteria) {
         log.debug("Request /find: criteria={}, page={}", criteria, page);
         return new PageResponse<>(gameService.findGames(criteria, page));
     }
@@ -145,6 +146,21 @@ public class GameController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(gameService.registerGame(game));
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Game successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Game not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteGame(@PathVariable UUID id) {
+        gameService.deleteGame(id);
+        return ResponseEntity.ok().build();
     }
 }
 
