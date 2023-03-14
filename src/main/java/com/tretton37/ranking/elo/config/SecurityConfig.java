@@ -33,8 +33,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**")
+                        .permitAll()
                     .anyRequest()
-                    .authenticated()
+                        .authenticated()
                 .and()
                 .csrf().disable()
                 .cors().configurationSource(corsConfig())
