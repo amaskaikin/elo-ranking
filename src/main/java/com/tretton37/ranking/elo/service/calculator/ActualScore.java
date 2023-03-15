@@ -35,7 +35,7 @@ public class ActualScore {
                 }
                 case DRAW -> {
                     this.actualScore.playerAScore = 0.5;
-                    this.actualScore.playerBScore = 1.5;
+                    this.actualScore.playerBScore = 0.5;
                 }
                 default -> throw new RuntimeException("Unknown game result: " + result);
             }

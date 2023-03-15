@@ -53,21 +53,19 @@ public class EloCalculatorService {
 
     private int calculateKFactor(Player player) {
         log.trace("Calculating K-factor for Player: {}", player);
-        Integer gamesPlayed = player.getGamesPlayed();
-        if (gamesPlayed > gamesThreshold) {
-            if (!player.isReachedHighRating()) {
-                int kFactor = kFactorMax / 2;
-                log.trace("calculateKFactor: Player played more than threshold={} games, but never reached the high rank, " +
-                        "return K-factor: {}", gamesThreshold, kFactor);
-                return kFactor;
-            }
-            log.trace("calculateKFactor: Player played more than threshold={} games, and have reached the high rank, " +
-                    "return K-factor: {}", gamesThreshold, kFactorMin);
-            return kFactorMin;
+        if (player.getGamesPlayed() <= gamesThreshold) {
+            log.trace("calculateKFactor: Player played games less than threshold, return K-factor: {}", kFactorMax);
+            return kFactorMax;
         }
-
-        log.trace("calculateKFactor: Player played games less than threshold, return K-factor: {}", kFactorMax);
-        return kFactorMax;
+        if (!player.isReachedHighRating()) {
+            int kFactor = kFactorMax / 2;
+            log.trace("calculateKFactor: Player played more than threshold={} games, " +
+                    "but never reached the high rank, return K-factor: {}", gamesThreshold, kFactor);
+            return kFactor;
+        }
+        log.trace("calculateKFactor: Player played more than threshold={} games, and have reached the high rank, " +
+                "return K-factor: {}", gamesThreshold, kFactorMin);
+        return kFactorMin;
     }
 
     private double calculateExpectedScore(double eloRatingA, double eloRatingB) {
