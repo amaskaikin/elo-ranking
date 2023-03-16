@@ -28,6 +28,9 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: elo-ranking
     volumes:
-      - /var/lib/postgresql/data
+      - elo-db-data:/var/lib/postgresql/data
     ports:
       - "5442:5432"
+
+volumes:
+  elo-db-data:
