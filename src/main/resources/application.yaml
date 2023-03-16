@@ -22,17 +22,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://dev-rpjs656325jw0c13.us.auth0.com/
+          issuer-uri: ${JWT_ISSUER_URI}
 
 logging:
   level:
-    com.tretton37.ranking.elo: ${APP_LOG_LEVEL}
+    com.tretton37.ranking.elo: ${APP_LOG_LEVEL:DEBUG}
 
 elo:
   ranking:
-    initial-rank: ${APP_ELO_INITIAL_RANK}
-    threshold-rank: ${APP_ELO_THRESHOLD_RANK}
-    games-threshold: ${APP_GAMES_THRESHOLD}
+    initial-rank: ${APP_ELO_INITIAL_RANK:1000}
+    threshold-rank: ${APP_ELO_THRESHOLD_RANK:2400}
+    games-threshold: ${APP_GAMES_THRESHOLD:30}
     k-factor:
-      min: ${APP_K_FACTOR_MIN}
-      max: ${APP_K_FACTOR_MAX}
+      min: ${APP_K_FACTOR_MIN:10}
+      max: ${APP_K_FACTOR_MAX:40}

@@ -6,6 +6,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: admin
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-rpjs656325jw0c13.us.auth0.com/
 
 logging:
   level:
@@ -13,12 +18,3 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.tretton37.ranking.elo: TRACE
     org.springframework.security: TRACE
-
-elo:
-  ranking:
-    initial-rank: 1000
-    threshold-rank: 2400
-    games-threshold: 30
-    k-factor:
-      min: 10
-      max: 40
