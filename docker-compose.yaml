@@ -7,18 +7,24 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://elo-db:5432/elo-ranking
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: F!T#cD64Z5eh
+      SPRING_DATASOURCE_PASSWORD: admin
+      APP_ELO_INITIAL_RANK: 1000
+      APP_ELO_THRESHOLD_RANK: 2400
+      APP_K_FACTOR_MIN: 10
+      APP_K_FACTOR_MAX: 40
+      APP_GAMES_THRESHOLD: 30
+      APP_LOG_LEVEL: DEBUG
     ports:
       - "8082:8080"
     depends_on:
       - elo-db
 
   elo-db:
-    image: postgres:latest
+    image: postgres:15.2-alpine
     container_name: elo-ranking-pgdb
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: F!T#cD64Z5eh
+      POSTGRES_PASSWORD: admin
       POSTGRES_DB: elo-ranking
     volumes:
       - /var/lib/postgresql/data
