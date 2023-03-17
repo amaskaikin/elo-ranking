@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   elo:
-    image: totonma/elo-ranking:latest
+    image: totonma/elo-ranking:latest-native
     container_name: elo-ranking
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://elo-db:5432/elo-ranking
@@ -13,7 +13,7 @@ services:
       APP_K_FACTOR_MIN: 10
       APP_K_FACTOR_MAX: 40
       APP_GAMES_THRESHOLD: 30
-      APP_LOG_LEVEL: DEBUG
+      APP_LOG_LEVEL: TRACE
       JWT_ISSUER_URI: https://dev-rpjs656325jw0c13.us.auth0.com/
     ports:
       - "8082:8080"

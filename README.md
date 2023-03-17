@@ -18,6 +18,7 @@ Default values:
 - Spring Security
 - OpenAPI Swagger v3
 - OAuth2 Resource server configured with `Auth0` IDP
+- **EXPERIMENTAL**: GraalVM Native image support
 
 Deployed as `Docker` container running in `AWS EC2` instance behind `Nginx` reverse proxy
 
