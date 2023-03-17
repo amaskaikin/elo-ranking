@@ -19,6 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -33,7 +35,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
-                    .requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui/**")
+                    .requestMatchers(antMatcher("/v3/api-docs/**"), antMatcher("/swagger-resources/**"),
+                            antMatcher("/swagger-ui/**"), antMatcher("/swagger-ui.html"))
                         .permitAll()
                     .anyRequest()
                         .authenticated()
