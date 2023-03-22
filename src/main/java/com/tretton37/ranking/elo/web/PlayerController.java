@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -80,8 +80,10 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Player> findPlayers(@ParameterObject PlayerSearchCriteria criteria) {
-        return playerService.find(criteria);
+    // ToDo: Update with `@ParameterObject` once it start working in OpenAPI lib
+    public Collection<Player> findPlayers(@RequestParam(required = false) String name,
+                                          @RequestParam(required = false) UUID tournamentId) {
+        return playerService.find(new PlayerSearchCriteria(name, tournamentId));
     }
 
     @ApiResponses(value = {

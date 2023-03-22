@@ -24,6 +24,9 @@ spring:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI}
 
+springdoc:
+  enable-native-support: true
+
 logging:
   level:
     com.tretton37.ranking.elo: ${APP_LOG_LEVEL:DEBUG}

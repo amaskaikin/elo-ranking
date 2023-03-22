@@ -3,6 +3,9 @@ plugins {
 	id 'org.springframework.boot' version '3.0.4'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id "io.freefair.lombok" version "6.6.2"
+	// Comment plugins below to build JVM image
+	id 'org.graalvm.buildtools.native' version '0.9.20'
+	id 'org.hibernate.orm' version '6.1.7.Final'
 }
 
 group = 'com.tretton37.ranking'
@@ -26,6 +29,18 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+def versionImage = 'latest-native'
+
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named("bootBuildImage") {
+	imageName = "totonma/elo-ranking:${versionImage}"
+}
+
+hibernate {
+	enhancement {
+		lazyInitialization true
+	}
 }

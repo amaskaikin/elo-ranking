@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Slf4j
@@ -79,8 +81,12 @@ public class GameController {
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
     public PageResponse<Game> findGames(@PageableDefault(size = 30, sort = "playedWhen",
             direction = Sort.Direction.DESC) @ParameterObject Pageable page,
-                                        @ParameterObject GameSearchCriteria criteria) {
+                                        @RequestParam(required = false) Collection<UUID> playerIds,
+                                        @RequestParam(required = false) UUID winnerId,
+                                        @RequestParam(required = false) UUID tournamentId) {
+        GameSearchCriteria criteria = new GameSearchCriteria(playerIds, winnerId, tournamentId);
         log.debug("Request /find: criteria={}, page={}", criteria, page);
+
         return new PageResponse<>(gameService.findGames(criteria, page));
     }
 
