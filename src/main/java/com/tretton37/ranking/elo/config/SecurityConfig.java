@@ -38,6 +38,8 @@ public class SecurityConfig {
                     .requestMatchers(antMatcher("/v3/api-docs/**"), antMatcher("/swagger-resources/**"),
                             antMatcher("/swagger-ui/**"), antMatcher("/swagger-ui.html"))
                         .permitAll()
+                    .requestMatchers(antMatcher("/actuator/**"))
+                        .permitAll()
                     .anyRequest()
                         .authenticated()
                 .and()
