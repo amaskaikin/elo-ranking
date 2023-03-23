@@ -43,7 +43,11 @@ public class PlayerService {
         this.objectMapper = objectMapper;
     }
 
-    public Page<Player> getPlayers(Pageable pageable) {
+    public Page<Player> getPlayers(Pageable pageable, UUID tournamentId) {
+        if (tournamentId != null) {
+            return playerRepository.findAllByTournamentId(tournamentId, pageable)
+                    .map(playerMapper::entityToDto);
+        }
         return playerRepository.findAll(pageable)
                 .map(playerMapper::entityToDto);
     }
