@@ -61,15 +61,30 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void testGetPlayers() {
+    public void testGetPlayers_withoutTournament() {
         doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
                 .when(pageEntityMock).map(any());
         when(playerRepository.findAll(any(Pageable.class))).thenReturn(pageEntityMock);
 
-        Page<Player> result = playerService.getPlayers(Pageable.unpaged());
+        Page<Player> result = playerService.getPlayers(Pageable.unpaged(), null);
 
         assertThat(result.getContent(), hasSize(1));
         verify(playerRepository).findAll(any(Pageable.class));
+    }
+
+    @Test
+    public void testGetPlayers_withTournament() {
+        UUID tournamentId = UUID.randomUUID();
+
+        doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
+                .when(pageEntityMock).map(any());
+        when(playerRepository.findAllByTournamentId(eq(tournamentId), any(Pageable.class)))
+                .thenReturn(pageEntityMock);
+
+        Page<Player> result = playerService.getPlayers(Pageable.unpaged(), tournamentId);
+
+        assertThat(result.getContent(), hasSize(1));
+        verify(playerRepository).findAllByTournamentId(eq(tournamentId), any(Pageable.class));
     }
 
     @SuppressWarnings("unchecked")

@@ -64,9 +64,9 @@ public class PlayerController {
                                            @SortDefault.SortDefaults({
                                                    @SortDefault(sort = "rating", direction = Sort.Direction.DESC),
                                                    @SortDefault(sort = "name", direction = Sort.Direction.ASC),
-                                           })
-                                           Pageable page) {
-        return new PageResponse<>(playerService.getPlayers(page));
+                                           }) Pageable page,
+                                           @RequestParam(required = false) UUID tournamentId) {
+        return new PageResponse<>(playerService.getPlayers(page, tournamentId));
     }
 
     @Operation(summary = "Find players by specified criteria")
