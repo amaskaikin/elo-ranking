@@ -2,7 +2,7 @@ package com.tretton37.ranking.elo.web;
 
 import com.tretton37.ranking.elo.dto.PageResponse;
 import com.tretton37.ranking.elo.dto.Player;
-import com.tretton37.ranking.elo.dto.search.PlayerSearchCriteria;
+import com.tretton37.ranking.elo.dto.search.PlayerListFilteringCriteria;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.player.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,13 +60,16 @@ public class PlayerController {
     })
     @PageableAsQueryParam
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    // ToDo: Change filter params to `@ParameterObject` once it starts working in OpenAPI lib
     public PageResponse<Player> getPlayers(@PageableDefault(size = 30)
                                            @SortDefault.SortDefaults({
                                                    @SortDefault(sort = "rating", direction = Sort.Direction.DESC),
                                                    @SortDefault(sort = "name", direction = Sort.Direction.ASC),
                                            }) Pageable page,
-                                           @RequestParam(required = false) UUID tournamentId) {
-        return new PageResponse<>(playerService.getPlayers(page, tournamentId));
+                                           @RequestParam(required = false) UUID tournamentId,
+                                           @RequestParam(required = false) Integer minGamesPlayed) {
+        return new PageResponse<>(playerService.getPlayers(
+                new PlayerListFilteringCriteria(tournamentId, minGamesPlayed), page));
     }
 
     @Operation(summary = "Find players by specified criteria")
@@ -80,10 +83,8 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    // ToDo: Update with `@ParameterObject` once it start working in OpenAPI lib
-    public Collection<Player> findPlayers(@RequestParam(required = false) String name,
-                                          @RequestParam(required = false) UUID tournamentId) {
-        return playerService.find(new PlayerSearchCriteria(name, tournamentId));
+    public Collection<Player> findPlayers(@RequestParam(required = false) String name) {
+        return playerService.find(name);
     }
 
     @ApiResponses(value = {
