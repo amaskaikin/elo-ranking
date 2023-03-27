@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.dto.mapper.PlayerMapper;
-import com.tretton37.ranking.elo.dto.search.PlayerSearchCriteria;
+import com.tretton37.ranking.elo.dto.search.PlayerListFilteringCriteria;
 import com.tretton37.ranking.elo.persistence.PlayerRepository;
 import com.tretton37.ranking.elo.persistence.entity.PlayerEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,43 +60,31 @@ public class PlayerServiceTest {
         ReflectionTestUtils.setField(playerService, "initialRank", 1000);
     }
 
-    @Test
-    public void testGetPlayers_withoutTournament() {
-        doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
-                .when(pageEntityMock).map(any());
-        when(playerRepository.findAll(any(Pageable.class))).thenReturn(pageEntityMock);
-
-        Page<Player> result = playerService.getPlayers(Pageable.unpaged(), null);
-
-        assertThat(result.getContent(), hasSize(1));
-        verify(playerRepository).findAll(any(Pageable.class));
-    }
-
-    @Test
-    public void testGetPlayers_withTournament() {
-        UUID tournamentId = UUID.randomUUID();
-
-        doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
-                .when(pageEntityMock).map(any());
-        when(playerRepository.findAllByTournamentId(eq(tournamentId), any(Pageable.class)))
-                .thenReturn(pageEntityMock);
-
-        Page<Player> result = playerService.getPlayers(Pageable.unpaged(), tournamentId);
-
-        assertThat(result.getContent(), hasSize(1));
-        verify(playerRepository).findAllByTournamentId(eq(tournamentId), any(Pageable.class));
-    }
-
     @SuppressWarnings("unchecked")
     @Test
+    public void testGetPlayers() {
+        PlayerListFilteringCriteria filteringCriteria =
+                new PlayerListFilteringCriteria(UUID.randomUUID(), 1);
+        doReturn(pageEntityMock).when(playerRepository)
+                .findAll(any(Specification.class), any(Pageable.class));
+        doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
+                .when(pageEntityMock).map(any());
+
+        Page<Player> result = playerService.getPlayers(filteringCriteria, Pageable.unpaged());
+
+        assertThat(result.getContent(), hasSize(1));
+        verify(playerRepository).findAll(any(Specification.class), any(Pageable.class));
+    }
+
+    @Test
     public void testFind() {
-        PlayerSearchCriteria searchCriteria = new PlayerSearchCriteria(null, UUID.randomUUID());
+        String searchName = "player";
         doReturn(Collections.singletonList(mock(PlayerEntity.class)))
-                .when(playerRepository).findAll(any(Specification.class));
+                .when(playerRepository).findAllByNameContainingIgnoreCase(eq(searchName));
 
-        Collection<Player> result = playerService.find(searchCriteria);
+        Collection<Player> result = playerService.find(searchName);
 
-        verify(playerRepository).findAll(any(Specification.class));
+        verify(playerRepository).findAllByNameContainingIgnoreCase(searchName);
         assertThat(result, hasSize(1));
     }
 

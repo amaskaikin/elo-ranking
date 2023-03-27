@@ -31,7 +31,10 @@ public class GameRegistrationService {
 
         eloCalculatorService.updateEloRatings(playerA, playerB, game);
 
+        playerA.countGame();
+        playerB.countGame();
         playerService.deltaUpdateBatch(List.of(playerA, playerB));
+
         game.setPlayedWhen(LocalDateTime.now());
         game.setPlayerRefA(playerService.convertDtoToReference(playerA));
         game.setPlayerRefB(playerService.convertDtoToReference(playerB));
@@ -54,5 +57,4 @@ public class GameRegistrationService {
             result.setWinnerId(game.getPlayerRefB().getId());
         }
     }
-
 }

@@ -44,4 +44,6 @@ public class PlayerEntity {
     private LocalDateTime registeredWhen;
 
     private boolean reachedHighRating;
+
+    private Integer gamesPlayed;
 }

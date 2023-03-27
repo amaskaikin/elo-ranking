@@ -36,8 +36,13 @@ public class Player {
 
     private LocalDateTime registeredWhen;
 
-    private Integer gamesPlayed;
+    @Builder.Default
+    private Integer gamesPlayed = 0;
 
     @JsonIgnore
     private boolean reachedHighRating;
+
+    public void countGame() {
+        this.gamesPlayed += 1;
+    }
 }

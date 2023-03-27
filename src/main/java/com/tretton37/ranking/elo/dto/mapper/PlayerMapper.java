@@ -2,24 +2,22 @@ package com.tretton37.ranking.elo.dto.mapper;
 
 import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.dto.Tournament;
-import com.tretton37.ranking.elo.persistence.GameRepository;
 import com.tretton37.ranking.elo.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.persistence.entity.TournamentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
 
-    private final GameRepository gameRepository;
     private final PersistenceMapper<Tournament, TournamentEntity> tournamentMapper;
     private final JsonNullableMapper jsonNullableMapper;
 
     @Autowired
-    public PlayerMapper(GameRepository gameRepository,
-                        PersistenceMapper<Tournament, TournamentEntity> tournamentMapper,
+    public PlayerMapper(PersistenceMapper<Tournament, TournamentEntity> tournamentMapper,
                         JsonNullableMapper jsonNullableMapper) {
-        this.gameRepository = gameRepository;
         this.tournamentMapper = tournamentMapper;
         this.jsonNullableMapper = jsonNullableMapper;
     }
@@ -34,7 +32,7 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
                 .tournamentRef(tournamentMapper.entityToDto(playerEntity.getTournament()))
                 .rating(playerEntity.getRating())
                 .registeredWhen(playerEntity.getRegisteredWhen())
-                .gamesPlayed(gameRepository.countByPlayer(playerEntity.getId()))
+                .gamesPlayed(playerEntity.getGamesPlayed())
                 .reachedHighRating(playerEntity.isReachedHighRating())
                 .build();
     }
@@ -50,6 +48,7 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
                 .rating(player.getRating())
                 .registeredWhen(player.getRegisteredWhen())
                 .reachedHighRating(player.isReachedHighRating())
+                .gamesPlayed(Optional.ofNullable(player.getGamesPlayed()).orElse(0))
                 .build();
     }
 }

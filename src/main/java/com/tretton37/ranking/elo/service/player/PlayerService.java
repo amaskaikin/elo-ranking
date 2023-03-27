@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tretton37.ranking.elo.dto.Player;
 import com.tretton37.ranking.elo.dto.PlayerRef;
 import com.tretton37.ranking.elo.dto.mapper.PlayerMapper;
-import com.tretton37.ranking.elo.dto.search.PlayerSearchCriteria;
+import com.tretton37.ranking.elo.dto.search.PlayerListFilteringCriteria;
 import com.tretton37.ranking.elo.errorhandling.EntityAlreadyExistsException;
 import com.tretton37.ranking.elo.errorhandling.EntityNotFoundException;
 import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
@@ -43,17 +43,15 @@ public class PlayerService {
         this.objectMapper = objectMapper;
     }
 
-    public Page<Player> getPlayers(Pageable pageable, UUID tournamentId) {
-        if (tournamentId != null) {
-            return playerRepository.findAllByTournamentId(tournamentId, pageable)
-                    .map(playerMapper::entityToDto);
-        }
-        return playerRepository.findAll(pageable)
+    public Page<Player> getPlayers(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+        return playerRepository.findAll(PlayerSpecificationBuilder
+                        .forCriteria(filteringCriteria)
+                        .build(), pageable)
                 .map(playerMapper::entityToDto);
     }
 
-    public Collection<Player> find(PlayerSearchCriteria searchCriteria) {
-        return playerRepository.findAll(PlayerSpecificationBuilder.forCriteria(searchCriteria).build())
+    public Collection<Player> find(String name) {
+        return playerRepository.findAllByNameContainingIgnoreCase(name)
                 .stream()
                 .map(playerMapper::entityToDto)
                 .collect(Collectors.toList());
