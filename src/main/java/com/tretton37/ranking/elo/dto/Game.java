@@ -37,6 +37,8 @@ public class Game {
     public static class GameResult {
         private Integer playerAScore;
         private Integer playerBScore;
+        private Integer playerARatingAlteration;
+        private Integer playerBRatingAlteration;
         private UUID winnerId;
     }
 }

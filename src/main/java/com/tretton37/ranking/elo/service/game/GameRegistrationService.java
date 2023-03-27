@@ -6,14 +6,19 @@ import com.tretton37.ranking.elo.service.player.PlayerService;
 import com.tretton37.ranking.elo.service.calculator.EloCalculatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class GameRegistrationService {
+    @Value("${elo.ranking.threshold-rank}")
+    private Integer thresholdRank;
+
     private final PlayerService playerService;
     private final EloCalculatorService eloCalculatorService;
 
@@ -24,15 +29,17 @@ public class GameRegistrationService {
         this.eloCalculatorService = eloCalculatorService;
     }
 
-    public Game registerGame(Game game) {
+    public Game registerGame(final Game game) {
         Player playerA = playerService.findById(game.getPlayerRefA().getId());
         Player playerB = playerService.findById(game.getPlayerRefB().getId());
         calculateWinner(game);
 
-        eloCalculatorService.updateEloRatings(playerA, playerB, game);
+        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
+        newRatings.forEach((player, newRating) -> {
+            trackResultRatingAlteration(player, newRating, game);
+            updatePlayer(player, newRating);
+        });
 
-        playerA.countGame();
-        playerB.countGame();
         playerService.deltaUpdateBatch(List.of(playerA, playerB));
 
         game.setPlayedWhen(LocalDateTime.now());
@@ -40,6 +47,23 @@ public class GameRegistrationService {
         game.setPlayerRefB(playerService.convertDtoToReference(playerB));
 
         return game;
+    }
+
+    private void trackResultRatingAlteration(Player player, Integer newRating, Game game) {
+        var gameResult = game.getGameResult();
+        if (player.getId().equals(game.getPlayerRefA().getId())) {
+            gameResult.setPlayerARatingAlteration(newRating - player.getRating());
+        } else {
+            gameResult.setPlayerBRatingAlteration(newRating - player.getRating());
+        }
+    }
+
+    private void updatePlayer(Player player, int rating) {
+        player.countGame();
+        player.setRating(rating);
+        if (rating > thresholdRank) {
+            player.setReachedHighRating(Boolean.TRUE);
+        }
     }
 
     private void calculateWinner(Game game) {

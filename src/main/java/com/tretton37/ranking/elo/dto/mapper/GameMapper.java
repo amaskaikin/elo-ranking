@@ -34,6 +34,8 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
                         .winnerId(gameEntity.getGameResult().getWinnerId())
                         .playerAScore(gameEntity.getGameResult().getPlayerAScore())
                         .playerBScore(gameEntity.getGameResult().getPlayerBScore())
+                        .playerARatingAlteration(gameEntity.getGameResult().getPlayerARatingAlteration())
+                        .playerBRatingAlteration(gameEntity.getGameResult().getPlayerBRatingAlteration())
                         .build())
                 .playedWhen(gameEntity.getPlayedWhen())
                 .build();
@@ -50,6 +52,8 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
                         .winnerId(game.getGameResult().getWinnerId())
                         .playerAScore(game.getGameResult().getPlayerAScore())
                         .playerBScore(game.getGameResult().getPlayerBScore())
+                        .playerARatingAlteration(game.getGameResult().getPlayerARatingAlteration())
+                        .playerBRatingAlteration(game.getGameResult().getPlayerBRatingAlteration())
                         .build())
                 .playedWhen(game.getPlayedWhen())
                 .build();
