@@ -11,8 +11,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.aMapWithSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -30,7 +33,6 @@ public class EloCalculatorServiceTest {
 
     @BeforeEach
     public void setUp() {
-        ReflectionTestUtils.setField(eloCalculatorService, "thresholdRank", 2400);
         ReflectionTestUtils.setField(eloCalculatorService, "kFactorMax", 40);
         ReflectionTestUtils.setField(eloCalculatorService, "kFactorMin", 10);
         ReflectionTestUtils.setField(eloCalculatorService, "gamesThreshold", 30);
@@ -67,10 +69,11 @@ public class EloCalculatorServiceTest {
         when(actualScore.getPlayerAScore()).thenReturn(1.0);
         when(actualScore.getPlayerBScore()).thenReturn(0.0);
 
-        eloCalculatorService.updateEloRatings(playerA, playerB, game);
+        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
 
-        assertEquals(1614, playerA.getRating());
-        assertEquals(1485, playerB.getRating());
+        assertThat(newRatings, aMapWithSize(2));
+        assertEquals(1614, newRatings.get(playerA));
+        assertEquals(1485, newRatings.get(playerB));
 
         verify(calculatorHelper).calculateActualScore(playerA, playerB, playerIdA);
     }

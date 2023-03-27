@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @Slf4j
 public class EloCalculatorService {
-    @Value("${elo.ranking.threshold-rank}")
-    private Integer thresholdRank;
     @Value("${elo.ranking.k-factor.max}")
     private Integer kFactorMax;
     @Value("${elo.ranking.k-factor.min}")
@@ -26,7 +26,7 @@ public class EloCalculatorService {
         this.calculatorHelper = calculatorHelper;
     }
 
-    public void updateEloRatings(Player playerA, Player playerB, Game game) {
+    public Map<Player, Integer> calculateRatings(Player playerA, Player playerB, Game game) {
         log.debug("updateEloRatings: Calculating new rating for PlayerA: {} and PlayerB: {}. " +
                 "game: {}", playerA, playerB, game);
 
@@ -40,15 +40,7 @@ public class EloCalculatorService {
         int playerANewRating = calculateNewEloRating(playerA, expectedScoreA, actualScore.getPlayerAScore());
         int playerBNewRating = calculateNewEloRating(playerB, expectedScoreB, actualScore.getPlayerBScore());
 
-        updateRating(playerA, playerANewRating);
-        updateRating(playerB, playerBNewRating);
-    }
-
-    private void updateRating(Player player, int rating) {
-        player.setRating(rating);
-        if (rating > thresholdRank) {
-            player.setReachedHighRating(Boolean.TRUE);
-        }
+        return Map.of(playerA, playerANewRating, playerB, playerBNewRating);
     }
 
     private int calculateKFactor(Player player) {
@@ -76,7 +68,7 @@ public class EloCalculatorService {
         double currentEloRating = player.getRating();
         double kFactor = calculateKFactor(player);
 
-        int calculatedRating = (int) (currentEloRating + kFactor * (actualScore - expectedScore));
+        int calculatedRating = (int) Math.round(currentEloRating + kFactor * (actualScore - expectedScore));
         log.info("calculateNewEloRating: New Rating: {} for Player: {}", calculatedRating, player);
 
         return calculatedRating;

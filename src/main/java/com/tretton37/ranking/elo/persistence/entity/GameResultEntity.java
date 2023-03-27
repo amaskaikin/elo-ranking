@@ -31,4 +31,9 @@ public class GameResultEntity {
 
     @Column(name = "winner_id")
     private UUID winnerId;
+
+    @Column(name = "playerA_rating_alt")
+    private Integer playerARatingAlteration;
+    @Column(name = "playerB_rating_alt")
+    private Integer playerBRatingAlteration;
 }
