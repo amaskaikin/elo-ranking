@@ -22,15 +22,15 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final PersistenceMapper<Game, GameEntity> mapper;
-    private final GameRegistrationService registrationService;
+    private final GameLifecycleManager lifecycleManager;
 
     @Autowired
     public GameService(GameRepository gameRepository,
                        PersistenceMapper<Game, GameEntity> mapper,
-                       GameRegistrationService registrationService) {
+                       GameLifecycleManager lifecycleManager) {
         this.gameRepository = gameRepository;
         this.mapper = mapper;
-        this.registrationService = registrationService;
+        this.lifecycleManager = lifecycleManager;
     }
 
     public Page<Game> getGames(Pageable pageable) {
@@ -52,8 +52,9 @@ public class GameService {
     }
 
     public Game registerGame(Game game) {
-        Game created = registrationService.registerGame(game);
-        return mapper.entityToDto(gameRepository.save(mapper.dtoToEntity(created)));
+        lifecycleManager.register(game);
+
+        return mapper.entityToDto(gameRepository.save(mapper.dtoToEntity(game)));
     }
 
     public void deleteGame(UUID id) {

@@ -2,7 +2,6 @@ package com.tretton37.ranking.elo.service.game;
 
 import com.tretton37.ranking.elo.dto.Game;
 import com.tretton37.ranking.elo.dto.Player;
-import com.tretton37.ranking.elo.service.player.PlayerService;
 import com.tretton37.ranking.elo.service.calculator.EloCalculatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,43 +9,33 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Slf4j
-public class GameRegistrationService {
+public class GameRegistrarHelper {
     @Value("${elo.ranking.threshold-rank}")
     private Integer thresholdRank;
-
-    private final PlayerService playerService;
     private final EloCalculatorService eloCalculatorService;
 
     @Autowired
-    public GameRegistrationService(PlayerService playerService,
-                                   EloCalculatorService eloCalculatorService) {
-        this.playerService = playerService;
+    public GameRegistrarHelper(EloCalculatorService eloCalculatorService) {
         this.eloCalculatorService = eloCalculatorService;
     }
 
-    public Game registerGame(final Game game) {
-        Player playerA = playerService.findById(game.getPlayerRefA().getId());
-        Player playerB = playerService.findById(game.getPlayerRefB().getId());
-        calculateWinner(game);
-
+    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
         Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
         newRatings.forEach((player, newRating) -> {
             trackResultRatingAlteration(player, newRating, game);
             updatePlayer(player, newRating);
         });
+    }
 
-        playerService.deltaUpdateBatch(List.of(playerA, playerB));
-
+    public void init(Game game) {
+        game.setId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
-        game.setPlayerRefA(playerService.convertDtoToReference(playerA));
-        game.setPlayerRefB(playerService.convertDtoToReference(playerB));
-
-        return game;
+        setWinner(game);
     }
 
     private void trackResultRatingAlteration(Player player, Integer newRating, Game game) {
@@ -66,18 +55,18 @@ public class GameRegistrationService {
         }
     }
 
-    private void calculateWinner(Game game) {
+    private void setWinner(Game game) {
         Game.GameResult result = game.getGameResult();
         if (result.getWinnerId() != null || result.getPlayerAScore().equals(result.getPlayerBScore())) {
-            log.trace("calculateWinner: Winner calculation is not required for Result: {}", result);
+            log.trace("setWinner: Winner calculation is not required for Result: {}", result);
             return;
         }
         if (result.getPlayerAScore() > result.getPlayerBScore()) {
-            log.trace("calculateWinner: Winner is PlayerA");
+            log.trace("setWinner: Winner is PlayerA");
             result.setWinnerId(game.getPlayerRefA().getId());
         }
         if (result.getPlayerBScore() > result.getPlayerAScore()) {
-            log.trace("calculateWinner: Winner is PlayerB");
+            log.trace("setWinner: Winner is PlayerB");
             result.setWinnerId(game.getPlayerRefB().getId());
         }
     }

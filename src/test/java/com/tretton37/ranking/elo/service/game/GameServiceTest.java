@@ -40,7 +40,7 @@ public class GameServiceTest {
     @Mock
     private PersistenceMapper<Game, GameEntity> mapper;
     @Mock
-    private GameRegistrationService registrationService;
+    private GameLifecycleManager lifecycleManager;
     @Mock
     private Page<GameEntity> pageEntityMock;
 
@@ -107,19 +107,16 @@ public class GameServiceTest {
     @Test
     public void testRegisterGame_shouldRegisterGame() {
         Game gameToRegisterMock = mock(Game.class);
-        Game createdMock = mock(Game.class);
         GameEntity createdEntityMock = new GameEntity();
 
-        when(registrationService.registerGame(gameToRegisterMock)).thenReturn(createdMock);
-        when(mapper.dtoToEntity(createdMock)).thenReturn(createdEntityMock);
+        when(mapper.dtoToEntity(gameToRegisterMock)).thenReturn(createdEntityMock);
         when(gameRepository.save(createdEntityMock)).thenReturn(createdEntityMock);
-        when(mapper.entityToDto(createdEntityMock)).thenReturn(createdMock);
+        when(mapper.entityToDto(createdEntityMock)).thenReturn(gameToRegisterMock);
 
-        Game result = gameService.registerGame(gameToRegisterMock);
+        gameService.registerGame(gameToRegisterMock);
 
-        assertEquals(createdMock, result);
-        verify(registrationService).registerGame(gameToRegisterMock);
-        verify(mapper).dtoToEntity(createdMock);
+        verify(lifecycleManager).register(gameToRegisterMock);
+        verify(mapper).dtoToEntity(gameToRegisterMock);
         verify(gameRepository).save(createdEntityMock);
         verify(mapper).entityToDto(createdEntityMock);
     }

@@ -5,7 +5,6 @@ import com.tretton37.ranking.elo.dto.PageResponse;
 import com.tretton37.ranking.elo.dto.search.GameSearchCriteria;
 import com.tretton37.ranking.elo.errorhandling.ErrorResponse;
 import com.tretton37.ranking.elo.service.game.GameService;
-import com.tretton37.ranking.elo.service.validator.RequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -40,13 +39,10 @@ import java.util.UUID;
 @RequestMapping("/game")
 public class GameController {
     private final GameService gameService;
-    private final RequestValidator<Game> gameRequestValidator;
 
     @Autowired
-    public GameController(GameService gameService,
-                          RequestValidator<Game> gameRequestValidator) {
+    public GameController(GameService gameService) {
         this.gameService = gameService;
-        this.gameRequestValidator = gameRequestValidator;
     }
 
     @Operation(summary = "List games")
@@ -148,7 +144,6 @@ public class GameController {
             }))
             @Valid @RequestBody Game game) {
         log.info("registerGame: {}", game);
-        gameRequestValidator.validate(game);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(gameService.registerGame(game));

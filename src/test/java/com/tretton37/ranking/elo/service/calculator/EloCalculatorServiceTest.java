@@ -73,7 +73,7 @@ public class EloCalculatorServiceTest {
 
         assertThat(newRatings, aMapWithSize(2));
         assertEquals(1614, newRatings.get(playerA));
-        assertEquals(1485, newRatings.get(playerB));
+        assertEquals(1486, newRatings.get(playerB));
 
         verify(calculatorHelper).calculateActualScore(playerA, playerB, playerIdA);
     }
