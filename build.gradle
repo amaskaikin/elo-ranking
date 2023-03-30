@@ -29,7 +29,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-def versionImage = 'latest-native'
+def versionImage = 'latest-native-pgf'
 
 tasks.named('test') {
 	useJUnitPlatform()
