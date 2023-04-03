@@ -12,6 +12,7 @@ import com.tretton37.ranking.elo.errorhandling.ErrorDetails;
 import com.tretton37.ranking.elo.persistence.PlayerRepository;
 import com.tretton37.ranking.elo.persistence.entity.PlayerEntity;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,8 +52,18 @@ public class PlayerService {
                 .map(playerMapper::entityToDto);
     }
 
-    public Collection<Player> find(String name) {
-        return playerRepository.findAllByNameContainingIgnoreCase(name)
+    public Collection<Player> find(String email, String name) {
+        if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(name)) {
+            throw new UnsupportedOperationException("Either email or name should be specified. " +
+                    "Search by both parameters is not supported");
+        }
+        if (StringUtils.isNotEmpty(email)) {
+            return Collections.singletonList(
+                    playerMapper.entityToDto(playerRepository.findByEmail(email))
+            );
+        }
+
+        return playerRepository.findAllByNormalizedName(name)
                 .stream()
                 .map(playerMapper::entityToDto)
                 .collect(Collectors.toList());

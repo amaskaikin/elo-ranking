@@ -18,6 +18,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+  sql:
+    init:
+      mode: always
+      platform: postgresql
   security:
     oauth2:
       resourceserver:
