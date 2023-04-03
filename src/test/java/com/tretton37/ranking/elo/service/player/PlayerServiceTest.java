@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -77,15 +78,32 @@ public class PlayerServiceTest {
     }
 
     @Test
-    public void testFind() {
+    public void testFind_byName() {
         String searchName = "player";
         doReturn(Collections.singletonList(mock(PlayerEntity.class)))
-                .when(playerRepository).findAllByNameContainingIgnoreCase(eq(searchName));
+                .when(playerRepository).findAllByNormalizedName(eq(searchName));
 
-        Collection<Player> result = playerService.find(searchName);
+        Collection<Player> result = playerService.find(null, searchName);
 
-        verify(playerRepository).findAllByNameContainingIgnoreCase(searchName);
+        verify(playerRepository).findAllByNormalizedName(searchName);
         assertThat(result, hasSize(1));
+    }
+
+    @Test
+    public void testFind_byEmail() {
+        String searchEmail = "test@mail.com";
+        doReturn(mock(PlayerEntity.class)).when(playerRepository).findByEmail(eq(searchEmail));
+
+        Collection<Player> result = playerService.find(searchEmail, null);
+
+        verify(playerRepository).findByEmail(searchEmail);
+        assertThat(result, hasSize(1));
+    }
+
+    @Test
+    public void testFind_byEmailAndName() {
+        assertThrows(UnsupportedOperationException.class, () ->
+                playerService.find("abc@mail.com", "abc"));
     }
 
     @Test

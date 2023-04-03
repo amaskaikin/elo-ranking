@@ -83,8 +83,9 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Player> findPlayers(@RequestParam(required = false) String name) {
-        return playerService.find(name);
+    public Collection<Player> findPlayers(@RequestParam(required = false) String email,
+                                          @RequestParam(required = false) String name) {
+        return playerService.find(email, name);
     }
 
     @ApiResponses(value = {
