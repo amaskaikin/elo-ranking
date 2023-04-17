@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.application.service.game;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
+import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;
@@ -38,12 +39,16 @@ public class GameLifecycleManagerImplTest {
         UUID playerBId = UUID.randomUUID();
         Player playerA = mock(Player.class);
         Player playerB = mock(Player.class);
+        PlayerScore playerAScore = mock(PlayerScore.class);
+        PlayerScore playerBScore = mock(PlayerScore.class);
         PlayerRef playerARef = mock(PlayerRef.class);
         PlayerRef playerBRef = mock(PlayerRef.class);
         Game game = mock(Game.class);
 
-        when(game.getPlayerRefA()).thenReturn(playerARef);
-        when(game.getPlayerRefB()).thenReturn(playerBRef);
+        when(game.getPlayerScoreA()).thenReturn(playerAScore);
+        when(game.getPlayerScoreB()).thenReturn(playerBScore);
+        when(playerAScore.getPlayerRef()).thenReturn(playerARef);
+        when(playerBScore.getPlayerRef()).thenReturn(playerBRef);
         when(playerARef.getId()).thenReturn(playerAId);
         when(playerBRef.getId()).thenReturn(playerBId);
         when(playerService.findById(playerAId)).thenReturn(playerA);

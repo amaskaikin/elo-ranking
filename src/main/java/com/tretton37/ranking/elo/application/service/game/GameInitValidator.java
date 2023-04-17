@@ -18,17 +18,16 @@ public class GameInitValidator implements GameValidator {
     }
 
     private void validateWinnerAndScoresConsistency(Game game) {
-        var result = game.getGameResult();
-        var playerAScore = result.getPlayerAScore();
-        var playerBScore = result.getPlayerBScore();
-        UUID winnerId = result.getWinnerId();
+        var playerAScore = game.getPlayerScoreA().getScore();
+        var playerBScore = game.getPlayerScoreB().getScore();
+        UUID winnerId = game.getWinnerId();
 
         if (playerAScore != null && playerBScore != null) {
             if (playerAScore > playerBScore) {
-                verifyWinnerId(winnerId, game.getPlayerRefA().getId());
+                verifyWinnerId(winnerId, game.getPlayerScoreA().getPlayerRef().getId());
             }
             if (playerBScore > playerAScore) {
-                verifyWinnerId(winnerId, game.getPlayerRefB().getId());
+                verifyWinnerId(winnerId, game.getPlayerScoreB().getPlayerRef().getId());
             }
         }
     }

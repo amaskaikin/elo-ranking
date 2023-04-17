@@ -28,8 +28,8 @@ public class GameLifecycleManagerImpl implements GameLifecycleManager {
 
     @Override
     public void register(Game game) {
-        Player playerA = playerService.findById(game.getPlayerRefA().getId());
-        Player playerB = playerService.findById(game.getPlayerRefB().getId());
+        Player playerA = playerService.findById(game.getPlayerScoreA().getPlayerRef().getId());
+        Player playerB = playerService.findById(game.getPlayerScoreB().getPlayerRef().getId());
 
         gameInitValidator.validate(game, playerA, playerB);
 

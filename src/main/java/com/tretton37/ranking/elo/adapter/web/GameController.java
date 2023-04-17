@@ -125,19 +125,20 @@ public class GameController {
                             description = "To register the game only reference ids are required",
                             value = """
                                     {
-                                        "playerRefA": {
-                                            "id": "bd9e0e71-10b5-4e25-b280-0b89b14832fa"
+                                        "playerScoreA": {
+                                            "playerRef": {
+                                                "id": "bd9e0e71-10b5-4e25-b280-0b89b14832fa"
+                                            },
+                                            "score": 13
                                         },
-                                        "playerRefB": {
-                                            "id": "3d259076-6f85-4368-9ef3-b9256d5d8205"
+                                        "playerScoreB": {
+                                            "playerRef": {
+                                                "id": "3d259076-6f85-4368-9ef3-b9256d5d8205"
+                                            },
+                                            "score": 11
                                         },
                                         "tournamentRef": {
                                             "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
-                                        },
-                                        "gameResult": {
-                                            "playerAScore": 8,
-                                            "playerBScore": 11,
-                                            "winnerId": "3d259076-6f85-4368-9ef3-b9256d5d8205"
                                         }
                                     }
                                     """)

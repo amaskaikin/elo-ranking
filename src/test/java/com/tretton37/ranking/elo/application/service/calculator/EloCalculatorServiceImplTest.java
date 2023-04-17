@@ -1,5 +1,6 @@
 package com.tretton37.ranking.elo.application.service.calculator;
 
+import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.model.calculator.ActualScore;
 import com.tretton37.ranking.elo.application.utils.EloCalculatorHelper;
 import com.tretton37.ranking.elo.domain.model.Game;
@@ -60,11 +61,15 @@ public class EloCalculatorServiceImplTest {
                 .build();
 
         Game game = Game.builder()
-                .playerRefA(PlayerRef.builder().id(playerIdA).build())
-                .playerRefB(PlayerRef.builder().id(playerIdB).build())
-                .gameResult(Game.GameResult.builder()
-                        .winnerId(playerIdA)
-                        .build())
+                .playerScoreA(PlayerScore.builder()
+                                .playerRef(PlayerRef.builder().id(playerIdA).build())
+                                .build()
+                )
+                .playerScoreB(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerIdB).build())
+                        .build()
+                )
+                .winnerId(playerIdA)
                 .build();
 
         ActualScore actualScore = mock(ActualScore.class);

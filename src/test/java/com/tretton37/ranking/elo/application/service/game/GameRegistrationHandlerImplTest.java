@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.application.service.game;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
+import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,20 +42,21 @@ public class GameRegistrationHandlerImplTest {
     public void testInit() {
         Game game = mock(Game.class);
         UUID playerAId = UUID.randomUUID();
+        PlayerScore playerScoreA = mock(PlayerScore.class);
+        PlayerScore playerScoreB = mock(PlayerScore.class);
         PlayerRef playerRefA = mock(PlayerRef.class);
-        Game.GameResult gameResult = mock(Game.GameResult.class);
 
-        doReturn(gameResult).when(game).getGameResult();
-        doReturn(11).when(gameResult).getPlayerAScore();
-        doReturn(10).when(gameResult).getPlayerBScore();
-        doReturn(playerRefA).when(game).getPlayerRefA();
+        doReturn(playerScoreA).when(game).getPlayerScoreA();
+        doReturn(playerScoreB).when(game).getPlayerScoreB();
+        doReturn(11).when(playerScoreA).getScore();
+        doReturn(10).when(playerScoreB).getScore();
+        doReturn(playerRefA).when(playerScoreA).getPlayerRef();
         doReturn(playerAId).when(playerRefA).getId();
 
         gameRegistrationHandler.init(game);
 
         verify(game).setPlayedWhen(any(LocalDateTime.class));
-        verify(gameResult).setWinnerId(playerAId);
-
+        verify(game).setWinnerId(playerAId);
     }
 
     @Test
@@ -64,20 +66,24 @@ public class GameRegistrationHandlerImplTest {
         Player playerA = Player.builder().id(playerIdA).rating(1000).build();
         Player playerB = Player.builder().id(playerIdB).rating(1000).build();
         Game game = Game.builder()
-                .playerRefA(PlayerRef.builder().id(playerIdA).build())
-                .playerRefB(PlayerRef.builder().id(playerIdB).build())
-                .gameResult(Game.GameResult.builder()
-                        .playerAScore(2)
-                        .playerBScore(1)
-                        .build())
+                .playerScoreA(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerIdA).build())
+                        .score(2)
+                        .build()
+                )
+                .playerScoreB(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerIdB).build())
+                        .score(1)
+                        .build()
+                )
                 .build();
         when(eloCalculatorService.calculateRatings(playerA, playerB, game))
                 .thenReturn(Map.of(playerA, 1020, playerB, 980));
 
         gameRegistrationHandler.captureRatingAlterations(playerA, playerB, game);
 
-        assertEquals(20, game.getGameResult().getPlayerARatingAlteration());
-        assertEquals(-20, game.getGameResult().getPlayerBRatingAlteration());
+        assertEquals(20, game.getPlayerScoreA().getRatingAlteration());
+        assertEquals(-20, game.getPlayerScoreB().getRatingAlteration());
         assertEquals(1020, playerA.getRating());
         assertEquals(980, playerB.getRating());
         verify(eloCalculatorService).calculateRatings(playerA, playerB, game);
