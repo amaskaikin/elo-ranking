@@ -76,6 +76,7 @@ public class GameRegistrationHandlerImplTest {
                         .score(1)
                         .build()
                 )
+                .winnerId(playerIdA)
                 .build();
         when(eloCalculatorService.calculateRatings(playerA, playerB, game))
                 .thenReturn(Map.of(playerA, 1020, playerB, 980));
@@ -87,5 +88,9 @@ public class GameRegistrationHandlerImplTest {
         assertEquals(1020, playerA.getRating());
         assertEquals(980, playerB.getRating());
         verify(eloCalculatorService).calculateRatings(playerA, playerB, game);
+        assertEquals(1, playerA.getGamesWon());
+        assertEquals(0, playerB.getGamesWon());
+        assertEquals(1, playerA.getGamesPlayed());
+        assertEquals(1, playerB.getGamesPlayed());
     }
 }

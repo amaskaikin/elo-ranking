@@ -46,4 +46,6 @@ public class PlayerEntity {
     private boolean reachedHighRating;
 
     private Integer gamesPlayed;
+
+    private Integer gamesWon;
 }

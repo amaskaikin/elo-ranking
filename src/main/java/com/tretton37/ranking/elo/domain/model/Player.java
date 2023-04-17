@@ -34,15 +34,22 @@ public class Player {
 
     private Integer rating;
 
+    private Double winRate;
+
     private LocalDateTime registeredWhen;
 
     @Builder.Default
     private Integer gamesPlayed = 0;
+    @Builder.Default
+    private Integer gamesWon = 0;
 
     @JsonIgnore
     private boolean reachedHighRating;
 
-    public void countGame() {
+    public void countGame(boolean win) {
         this.gamesPlayed += 1;
+        if (win) {
+            this.gamesWon += 1;
+        }
     }
 }

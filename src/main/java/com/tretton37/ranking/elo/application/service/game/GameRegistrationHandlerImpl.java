@@ -26,19 +26,19 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
     }
 
     @Override
-    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
-        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
-        newRatings.forEach((player, newRating) -> {
-            trackResultRatingAlteration(player, newRating, game);
-            updatePlayer(player, newRating);
-        });
-    }
-
-    @Override
     public void init(Game game) {
         game.setId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
+    }
+
+    @Override
+    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
+        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
+        newRatings.forEach((player, newRating) -> {
+            trackResultRatingAlteration(player, newRating, game);
+            updatePlayer(player, newRating, game);
+        });
     }
 
     private void trackResultRatingAlteration(Player player, Integer newRating, Game game) {
@@ -51,8 +51,8 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
         }
     }
 
-    private void updatePlayer(Player player, int rating) {
-        player.countGame();
+    private void updatePlayer(Player player, int rating, Game game) {
+        player.countGame(player.getId().equals(game.getWinnerId()));
         player.setRating(rating);
         if (rating > thresholdRank) {
             player.setReachedHighRating(Boolean.TRUE);
