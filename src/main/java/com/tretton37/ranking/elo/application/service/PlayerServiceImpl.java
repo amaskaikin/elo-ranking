@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.application.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tretton37.ranking.elo.adapter.persistence.PlayerGateway;
+import com.tretton37.ranking.elo.application.utils.PlayerDetailsEnrichmentHelper;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.exception.EntityAlreadyExistsException;
 import com.tretton37.ranking.elo.domain.model.exception.EntityNotFoundException;
@@ -31,22 +32,29 @@ public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerGateway playerGateway;
     private final ObjectMapper objectMapper;
+    private final PlayerDetailsEnrichmentHelper enrichmentHelper;
 
     @Autowired
-    public PlayerServiceImpl(PlayerGateway playerGateway, ObjectMapper objectMapper) {
+    public PlayerServiceImpl(PlayerGateway playerGateway,
+                             ObjectMapper objectMapper,
+                             PlayerDetailsEnrichmentHelper enrichmentHelper) {
         this.playerGateway = playerGateway;
         this.objectMapper = objectMapper;
+        this.enrichmentHelper = enrichmentHelper;
     }
 
     @Override
     public Player findById(UUID uuid) {
-        return playerGateway.findById(uuid).orElseThrow(() -> new EntityNotFoundException(
+        Player player = playerGateway.findById(uuid).orElseThrow(() -> new EntityNotFoundException(
                 ErrorDetails.ENTITY_NOT_FOUND, "Player is not found by id: " + uuid));
+        enrichmentHelper.enrich(player);
+
+        return player;
     }
 
     @Override
-    public Page<Player> find(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
-        return playerGateway.find(filteringCriteria, pageable);
+    public Page<Player> list(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+        return playerGateway.list(filteringCriteria, pageable);
     }
 
     @Override

@@ -53,7 +53,7 @@ public class PlayerGatewayTest {
         doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
                 .when(pageEntityMock).map(any());
 
-        Page<Player> result = playerGateway.find(filteringCriteria, Pageable.unpaged());
+        Page<Player> result = playerGateway.list(filteringCriteria, Pageable.unpaged());
 
         assertThat(result.getContent(), hasSize(1));
         verify(playerRepository).findAll(any(Specification.class), any(Pageable.class));

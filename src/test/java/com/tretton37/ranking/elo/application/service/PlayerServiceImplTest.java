@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.tretton37.ranking.elo.adapter.persistence.PlayerGateway;
 import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
+import com.tretton37.ranking.elo.application.utils.PlayerDetailsEnrichmentHelper;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,8 @@ public class PlayerServiceImplTest {
     private PlayerGateway playerGateway;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private PlayerDetailsEnrichmentHelper enrichmentHelper;
 
     @InjectMocks
     private PlayerServiceImpl playerService;
@@ -58,9 +61,9 @@ public class PlayerServiceImplTest {
         PlayerListFilteringCriteria filteringCriteria =
                 new PlayerListFilteringCriteria(UUID.randomUUID(), 1);
 
-        playerService.find(filteringCriteria, Pageable.unpaged());
+        playerService.list(filteringCriteria, Pageable.unpaged());
 
-        verify(playerGateway).find(eq(filteringCriteria), any(Pageable.class));
+        verify(playerGateway).list(eq(filteringCriteria), any(Pageable.class));
     }
 
     @Test

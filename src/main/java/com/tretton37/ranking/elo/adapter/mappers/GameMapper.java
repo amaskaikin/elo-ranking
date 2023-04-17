@@ -1,6 +1,7 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
 import com.tretton37.ranking.elo.domain.model.Game;
+import com.tretton37.ranking.elo.domain.model.GameStatus;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
 import com.tretton37.ranking.elo.domain.model.Tournament;
 import com.tretton37.ranking.elo.application.persistence.entity.GameEntity;
@@ -9,6 +10,8 @@ import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class GameMapper implements PersistenceMapper<Game, GameEntity> {
@@ -37,6 +40,7 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
                         .playerARatingAlteration(gameEntity.getGameResult().getPlayerARatingAlteration())
                         .playerBRatingAlteration(gameEntity.getGameResult().getPlayerBRatingAlteration())
                         .build())
+                .status(GameStatus.valueOf(gameEntity.getStatus()))
                 .playedWhen(gameEntity.getPlayedWhen())
                 .build();
     }
@@ -55,6 +59,7 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
                         .playerARatingAlteration(game.getGameResult().getPlayerARatingAlteration())
                         .playerBRatingAlteration(game.getGameResult().getPlayerBRatingAlteration())
                         .build())
+                .status(Optional.ofNullable(game.getStatus()).orElse(GameStatus.COMPLETED).name())
                 .playedWhen(game.getPlayedWhen())
                 .build();
     }

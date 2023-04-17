@@ -52,6 +52,22 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public void approve(UUID id) {
+        Game game = this.findById(id);
+        gameLifecycleManager.approve(game);
+
+        gameGateway.save(game);
+    }
+
+    @Override
+    public void decline(UUID id) {
+        Game game = this.findById(id);
+        gameLifecycleManager.decline(game);
+
+        gameGateway.save(game);
+    }
+
+    @Override
     public void delete(UUID id) {
         log.info("delete: Deleting game: {}", id);
         gameGateway.delete(id);

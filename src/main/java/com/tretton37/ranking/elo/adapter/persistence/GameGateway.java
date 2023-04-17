@@ -12,9 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,6 +42,13 @@ public class GameGateway {
                         .forCriteria(Objects.requireNonNull(gameSearchCriteria))
                         .build(), pageable)
                 .map(mapper::entityToDto);
+    }
+
+    public Collection<Game> findByPlayerAndStatus(UUID playerId, String status) {
+        return gameRepository.findAllGamesByPlayerIdAndStatus(playerId, status)
+                .stream()
+                .map(mapper::entityToDto)
+                .collect(Collectors.toList());
     }
 
     public Optional<Game> findById(UUID id) {

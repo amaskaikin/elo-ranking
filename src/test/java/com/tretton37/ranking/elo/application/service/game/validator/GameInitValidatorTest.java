@@ -1,4 +1,4 @@
-package com.tretton37.ranking.elo.application.service.game;
+package com.tretton37.ranking.elo.application.service.game.validator;
 
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;

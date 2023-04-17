@@ -78,8 +78,8 @@ public class GameRegistrationHandlerImplTest {
 
         assertEquals(20, game.getGameResult().getPlayerARatingAlteration());
         assertEquals(-20, game.getGameResult().getPlayerBRatingAlteration());
-        assertEquals(1020, playerA.getRating());
-        assertEquals(980, playerB.getRating());
+        assertEquals(1000, playerA.getRating());
+        assertEquals(1000, playerB.getRating());
         verify(eloCalculatorService).calculateRatings(playerA, playerB, game);
     }
 }

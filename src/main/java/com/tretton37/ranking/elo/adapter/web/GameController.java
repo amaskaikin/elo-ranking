@@ -2,6 +2,7 @@ package com.tretton37.ranking.elo.adapter.web;
 
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.adapter.web.model.PageResponse;
+import com.tretton37.ranking.elo.domain.model.GameStatus;
 import com.tretton37.ranking.elo.domain.model.search.GameSearchCriteria;
 import com.tretton37.ranking.elo.adapter.web.model.ErrorResponse;
 import com.tretton37.ranking.elo.domain.service.game.GameService;
@@ -79,8 +80,9 @@ public class GameController {
             direction = Sort.Direction.DESC) @ParameterObject Pageable page,
                                         @RequestParam(required = false) Collection<UUID> playerIds,
                                         @RequestParam(required = false) UUID winnerId,
-                                        @RequestParam(required = false) UUID tournamentId) {
-        GameSearchCriteria criteria = new GameSearchCriteria(playerIds, winnerId, tournamentId);
+                                        @RequestParam(required = false) UUID tournamentId,
+                                        @RequestParam(defaultValue = "COMPLETED") GameStatus status) {
+        GameSearchCriteria criteria = new GameSearchCriteria(playerIds, winnerId, tournamentId, status);
         log.debug("Request /find: criteria={}, page={}", criteria, page);
 
         return new PageResponse<>(gameService.find(criteria, page));
@@ -151,6 +153,9 @@ public class GameController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Game successfully deleted"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
             @ApiResponse(responseCode = "404", description = "Game not found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
@@ -161,6 +166,42 @@ public class GameController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable UUID id) {
         gameService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Game successfully approved"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Game not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @PostMapping(value = "/{gameId}/approve")
+    public ResponseEntity<Void> approveGame(@PathVariable UUID gameId) {
+        gameService.approve(gameId);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Game successfully declined"),
+            @ApiResponse(responseCode = "400", description = "Bad Request",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Game not found",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @PostMapping(value = "/{gameId}/decline")
+    public ResponseEntity<Void> declineGame(@PathVariable UUID gameId) {
+        gameService.decline(gameId);
         return ResponseEntity.ok().build();
     }
 }

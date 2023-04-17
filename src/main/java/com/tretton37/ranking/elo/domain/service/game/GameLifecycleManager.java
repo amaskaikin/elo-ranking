@@ -4,4 +4,6 @@ import com.tretton37.ranking.elo.domain.model.Game;
 
 public interface GameLifecycleManager {
     void register(Game game);
+    void approve(Game game);
+    void decline(Game game);
 }
