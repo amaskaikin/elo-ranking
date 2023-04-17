@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 public interface PlayerService {
-    Page<Player> find(PlayerListFilteringCriteria filteringCriteria, Pageable pageable);
+    Page<Player> list(PlayerListFilteringCriteria filteringCriteria, Pageable pageable);
     Collection<Player> find(String email, String name);
     Player findById(UUID uuid);
     Player create(Player player);

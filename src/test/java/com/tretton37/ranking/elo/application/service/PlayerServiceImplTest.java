@@ -54,11 +54,11 @@ public class PlayerServiceImplTest {
     }
 
     @Test
-    public void testFind() {
+    public void testList() {
         PlayerListFilteringCriteria filteringCriteria =
                 new PlayerListFilteringCriteria(UUID.randomUUID(), 1);
 
-        playerService.find(filteringCriteria, Pageable.unpaged());
+        playerService.list(filteringCriteria, Pageable.unpaged());
 
         verify(playerGateway).find(eq(filteringCriteria), any(Pageable.class));
     }

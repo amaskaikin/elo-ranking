@@ -61,14 +61,14 @@ public class PlayerController {
     @PageableAsQueryParam
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     // ToDo: Change filter params to `@ParameterObject` once it starts working in OpenAPI lib
-    public PageResponse<Player> getPlayers(@PageableDefault(size = 30)
+    public PageResponse<Player> listPlayers(@PageableDefault(size = 30)
                                            @SortDefault.SortDefaults({
                                                    @SortDefault(sort = "rating", direction = Sort.Direction.DESC),
                                                    @SortDefault(sort = "name", direction = Sort.Direction.ASC),
                                            }) Pageable page,
                                            @RequestParam(required = false) UUID tournamentId,
                                            @RequestParam(required = false) Integer minGamesPlayed) {
-        return new PageResponse<>(playerService.find(
+        return new PageResponse<>(playerService.list(
                 new PlayerListFilteringCriteria(tournamentId, minGamesPlayed), page));
     }
 
