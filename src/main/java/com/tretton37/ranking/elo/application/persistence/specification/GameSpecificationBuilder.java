@@ -1,5 +1,6 @@
 package com.tretton37.ranking.elo.application.persistence.specification;
 
+import com.tretton37.ranking.elo.domain.model.GameStatus;
 import com.tretton37.ranking.elo.domain.model.search.GameSearchCriteria;
 import com.tretton37.ranking.elo.application.persistence.entity.GameEntity;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +33,7 @@ public class GameSpecificationBuilder {
                 )
                 .and(winnerIs(gameSearchCriteria.winnerId()))
                 .and(tournamentIs(gameSearchCriteria.tournamentId()))
+                .and(statusIs(gameSearchCriteria.status()))
         );
     }
 
@@ -57,5 +59,13 @@ public class GameSpecificationBuilder {
         }
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("tournament").get("id"), tournamentId);
+    }
+
+    private Specification<GameEntity> statusIs(GameStatus status) {
+        if (status == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("status"), status.name());
     }
 }

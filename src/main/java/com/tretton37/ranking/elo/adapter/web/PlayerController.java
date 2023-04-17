@@ -68,7 +68,7 @@ public class PlayerController {
                                            }) Pageable page,
                                            @RequestParam(required = false) UUID tournamentId,
                                            @RequestParam(required = false) Integer minGamesPlayed) {
-        return new PageResponse<>(playerService.find(
+        return new PageResponse<>(playerService.list(
                 new PlayerListFilteringCriteria(tournamentId, minGamesPlayed), page));
     }
 

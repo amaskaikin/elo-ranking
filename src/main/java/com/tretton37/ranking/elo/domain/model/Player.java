@@ -11,6 +11,8 @@ import lombok.ToString;
 import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -41,6 +43,15 @@ public class Player {
 
     @JsonIgnore
     private boolean reachedHighRating;
+
+    private Integer pendingRating;
+
+    private Collection<PendingGameRef> pendingGameRefs;
+
+    @JsonIgnore
+    public Integer getRatingIncludePending() {
+        return Optional.ofNullable(pendingRating).orElse(rating);
+    }
 
     public void countGame() {
         this.gamesPlayed += 1;

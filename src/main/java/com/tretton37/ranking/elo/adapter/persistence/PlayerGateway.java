@@ -30,7 +30,7 @@ public class PlayerGateway {
         this.playerMapper = playerMapper;
     }
 
-    public Page<Player> find(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+    public Page<Player> list(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
         return playerRepository.findAll(PlayerSpecificationBuilder
                         .forCriteria(filteringCriteria)
                         .build(), pageable)

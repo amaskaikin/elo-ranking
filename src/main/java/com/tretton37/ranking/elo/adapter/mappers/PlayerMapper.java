@@ -1,9 +1,9 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
-import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.Tournament;
 import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
+import com.tretton37.ranking.elo.domain.model.Player;
+import com.tretton37.ranking.elo.domain.model.Tournament;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +24,10 @@ public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
 
     @Override
     public Player entityToDto(PlayerEntity playerEntity) {
+        return entityToDto(playerEntity, true);
+    }
+
+    public Player entityToDto(PlayerEntity playerEntity, boolean detailed) {
         return Player.builder()
                 .id(playerEntity.getId())
                 .name(playerEntity.getName())

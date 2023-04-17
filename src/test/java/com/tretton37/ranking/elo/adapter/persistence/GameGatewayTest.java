@@ -57,7 +57,8 @@ public class GameGatewayTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testFind() {
-        GameSearchCriteria searchCriteria = new GameSearchCriteria(null, null, UUID.randomUUID());
+        GameSearchCriteria searchCriteria = new GameSearchCriteria(null, null,
+                UUID.randomUUID(), null);
         Page<Game> gameMock = mock(Page.class);
         Pageable pageable = Pageable.unpaged();
         doReturn(pageEntityMock).when(gameRepository).findAll(any(Specification.class), any(Pageable.class));

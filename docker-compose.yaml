@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   elo:
-    image: totonma/elo-ranking:latest-native
+    image: totonma/elo-ranking:latest-native-pgf
     container_name: elo-ranking
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://elo-db:5432/elo-ranking

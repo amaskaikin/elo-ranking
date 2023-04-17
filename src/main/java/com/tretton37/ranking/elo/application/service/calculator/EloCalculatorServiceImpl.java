@@ -31,8 +31,8 @@ public class EloCalculatorServiceImpl implements EloCalculatorService {
 
         ActualScore actualScore = getCalculatorHelper().calculateActualScore(playerA, playerB,
                 game.getGameResult().getWinnerId());
-        double expectedScoreA = calculateExpectedScore(playerA.getRating(), playerB.getRating());
-        double expectedScoreB = calculateExpectedScore(playerB.getRating(), playerA.getRating());
+        double expectedScoreA = calculateExpectedScore(playerA.getRatingIncludePending(), playerB.getRatingIncludePending());
+        double expectedScoreB = calculateExpectedScore(playerB.getRatingIncludePending(), playerA.getRatingIncludePending());
         log.debug("updateEloRatings: Actual score: {}, expected score for playerA: {}," +
                 " expected score for playerB: {}", actualScore, expectedScoreA, expectedScoreB);
 
@@ -64,7 +64,7 @@ public class EloCalculatorServiceImpl implements EloCalculatorService {
     }
 
     private int calculateNewEloRating(Player player, double expectedScore, double actualScore) {
-        double currentEloRating = player.getRating();
+        double currentEloRating = player.getRatingIncludePending();
         double kFactor = calculateKFactor(player);
 
         int calculatedRating = (int) Math.round(currentEloRating + kFactor * (actualScore - expectedScore));

@@ -28,6 +28,8 @@ public class Game {
     @NotNull
     private GameResult gameResult;
 
+    private GameStatus status;
+
     private LocalDateTime playedWhen;
 
     @Data

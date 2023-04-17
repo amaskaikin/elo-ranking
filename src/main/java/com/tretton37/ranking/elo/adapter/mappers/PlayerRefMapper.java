@@ -11,7 +11,6 @@ public class PlayerRefMapper implements PersistenceMapper<PlayerRef, PlayerEntit
         return PlayerRef.builder()
                 .id(playerEntity.getId())
                 .name(playerEntity.getName())
-                .rating(playerEntity.getRating())
                 .build();
     }
 
@@ -20,7 +19,6 @@ public class PlayerRefMapper implements PersistenceMapper<PlayerRef, PlayerEntit
         return PlayerEntity.builder()
                 .id(playerRef.getId())
                 .name(playerRef.getName())
-                .rating(playerRef.getRating())
                 .build();
     }
 }

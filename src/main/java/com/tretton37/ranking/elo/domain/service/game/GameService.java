@@ -12,5 +12,7 @@ public interface GameService {
     Page<Game> find(GameSearchCriteria gameSearchCriteria, Pageable pageable);
     Game findById(UUID id);
     Game register(Game game);
+    void approve(UUID id);
+    void decline(UUID id);
     void delete(UUID id);
 }

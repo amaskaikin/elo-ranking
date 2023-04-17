@@ -40,4 +40,6 @@ public class GameEntity {
 
     private LocalDateTime playedWhen;
 
+    private String status;
+
 }
