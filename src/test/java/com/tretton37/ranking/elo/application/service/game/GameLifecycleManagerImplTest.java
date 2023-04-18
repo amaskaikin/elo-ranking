@@ -5,6 +5,7 @@ import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
 import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
+import com.tretton37.ranking.elo.domain.service.achievement.AutoAchievementManager;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +31,8 @@ public class GameLifecycleManagerImplTest {
     private GameValidator gameInitValidator;
     @Mock
     private GameRegistrationHandler gameRegistrationHandler;
+    @Mock
+    private AutoAchievementManager autoAchievementManager;
 
     @InjectMocks
     private GameLifecycleManagerImpl gameLifecycleManager;
@@ -53,6 +57,7 @@ public class GameLifecycleManagerImplTest {
         when(playerBRef.getId()).thenReturn(playerBId);
         when(playerService.findById(playerAId)).thenReturn(playerA);
         when(playerService.findById(playerBId)).thenReturn(playerB);
+        doNothing().when(autoAchievementManager).evaluateAchievements(playerA, playerB);
 
         gameLifecycleManager.register(game);
 
@@ -62,5 +67,6 @@ public class GameLifecycleManagerImplTest {
         verify(gameRegistrationHandler).init(eq(game));
         verify(gameRegistrationHandler).captureRatingAlterations(eq(playerA), eq(playerB), eq(game));
         verify(playerService).deltaUpdateBatch(List.of(playerA, playerB));
+        verify(autoAchievementManager).evaluateAchievements(playerA, playerB);
     }
 }
