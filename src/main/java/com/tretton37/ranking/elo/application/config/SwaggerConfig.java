@@ -54,4 +54,12 @@ public class SwaggerConfig {
                 .pathsToMatch("/tournament/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi achievementApi() {
+        return GroupedOpenApi.builder()
+                .group("Achievement API")
+                .pathsToMatch("/achievement/**")
+                .build();
+    }
 }

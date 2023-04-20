@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.application.service.game;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
+import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.model.exception.RequestConsistencyException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,14 +27,17 @@ public class GameInitValidatorTest {
         UUID playerBId = UUID.randomUUID();
 
         Game game = Game.builder()
-                .playerRefA(PlayerRef.builder().id(playerAId).build())
-                .playerRefB(PlayerRef.builder().id(playerBId).build())
-                .gameResult(Game.GameResult.builder()
-                        .playerAScore(10)
-                        .playerBScore(5)
-                        .winnerId(playerAId)
+                .playerScoreA(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerAId).build())
+                        .score(10)
                         .build()
                 )
+                .playerScoreB(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerBId).build())
+                        .score(5)
+                        .build()
+                )
+                .winnerId(playerAId)
                 .build();
         validator.validate(game, mock(Player.class), mock(Player.class));
     }
@@ -44,20 +48,23 @@ public class GameInitValidatorTest {
         UUID playerBId = UUID.randomUUID();
 
         Game game = Game.builder()
-                .playerRefA(PlayerRef.builder().id(playerAId).build())
-                .playerRefB(PlayerRef.builder().id(playerBId).build())
-                .gameResult(Game.GameResult.builder()
-                        .playerAScore(10)
-                        .playerBScore(5)
-                        .winnerId(playerBId)
+                .playerScoreA(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerAId).build())
+                        .score(10)
                         .build()
                 )
+                .playerScoreB(PlayerScore.builder()
+                        .playerRef(PlayerRef.builder().id(playerBId).build())
+                        .score(5)
+                        .build()
+                )
+                .winnerId(playerBId)
                 .build();
         assertThrows(RequestConsistencyException.class, () ->
                 validator.validate(game, mock(Player.class), mock(Player.class)));
 
-        game.getGameResult().setPlayerBScore(11);
-        game.getGameResult().setWinnerId(playerAId);
+        game.getPlayerScoreB().setScore(11);
+        game.setWinnerId(playerAId);
         assertThrows(RequestConsistencyException.class, () ->
                 validator.validate(game, mock(Player.class), mock(Player.class)));
     }

@@ -26,32 +26,33 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
     }
 
     @Override
-    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
-        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
-        newRatings.forEach((player, newRating) -> {
-            trackResultRatingAlteration(player, newRating, game);
-            updatePlayer(player, newRating);
-        });
-    }
-
-    @Override
     public void init(Game game) {
         game.setId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
     }
 
+    @Override
+    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
+        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
+        newRatings.forEach((player, newRating) -> {
+            trackResultRatingAlteration(player, newRating, game);
+            updatePlayer(player, newRating, game);
+        });
+    }
+
     private void trackResultRatingAlteration(Player player, Integer newRating, Game game) {
-        var gameResult = game.getGameResult();
-        if (player.getId().equals(game.getPlayerRefA().getId())) {
-            gameResult.setPlayerARatingAlteration(newRating - player.getRating());
+        var playerResultA = game.getPlayerScoreA();
+        var playerResultB = game.getPlayerScoreB();
+        if (player.getId().equals(playerResultA.getPlayerRef().getId())) {
+            playerResultA.setRatingAlteration(newRating - player.getRating());
         } else {
-            gameResult.setPlayerBRatingAlteration(newRating - player.getRating());
+            playerResultB.setRatingAlteration(newRating - player.getRating());
         }
     }
 
-    private void updatePlayer(Player player, int rating) {
-        player.countGame();
+    private void updatePlayer(Player player, int rating, Game game) {
+        player.countGame(player.getId().equals(game.getWinnerId()));
         player.setRating(rating);
         if (rating > thresholdRank) {
             player.setReachedHighRating(Boolean.TRUE);
@@ -59,18 +60,19 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
     }
 
     private void setWinner(Game game) {
-        Game.GameResult result = game.getGameResult();
-        if (result.getWinnerId() != null || result.getPlayerAScore().equals(result.getPlayerBScore())) {
-            log.trace("setWinner: Winner calculation is not required for Result: {}", result);
+        var playerResultA = game.getPlayerScoreA();
+        var playerResultB = game.getPlayerScoreB();
+        if (game.getWinnerId() != null || playerResultA.getScore().equals(playerResultB.getScore())) {
+            log.trace("setWinner: Winner calculation is not required for Game: {}", game);
             return;
         }
-        if (result.getPlayerAScore() > result.getPlayerBScore()) {
+        if (playerResultA.getScore() > playerResultB.getScore()) {
             log.trace("setWinner: Winner is PlayerA");
-            result.setWinnerId(game.getPlayerRefA().getId());
+            game.setWinnerId(playerResultA.getPlayerRef().getId());
         }
-        if (result.getPlayerBScore() > result.getPlayerAScore()) {
+        if (playerResultB.getScore() > playerResultA.getScore()) {
             log.trace("setWinner: Winner is PlayerB");
-            result.setWinnerId(game.getPlayerRefB().getId());
+            game.setWinnerId(playerResultB.getPlayerRef().getId());
         }
     }
 }

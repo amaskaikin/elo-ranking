@@ -1,6 +1,7 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
 import com.tretton37.ranking.elo.domain.model.Game;
+import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
 import com.tretton37.ranking.elo.domain.model.Tournament;
 import com.tretton37.ranking.elo.application.persistence.entity.GameEntity;
@@ -27,16 +28,18 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
     public Game entityToDto(GameEntity gameEntity) {
         return Game.builder()
                 .id(gameEntity.getId())
-                .playerRefA(playerRefMapper.entityToDto(gameEntity.getPlayerA()))
-                .playerRefB(playerRefMapper.entityToDto(gameEntity.getPlayerB()))
-                .tournamentRef(tournamentMapper.entityToDto(gameEntity.getTournament()))
-                .gameResult(Game.GameResult.builder()
-                        .winnerId(gameEntity.getGameResult().getWinnerId())
-                        .playerAScore(gameEntity.getGameResult().getPlayerAScore())
-                        .playerBScore(gameEntity.getGameResult().getPlayerBScore())
-                        .playerARatingAlteration(gameEntity.getGameResult().getPlayerARatingAlteration())
-                        .playerBRatingAlteration(gameEntity.getGameResult().getPlayerBRatingAlteration())
+                .playerScoreA(PlayerScore.builder()
+                        .playerRef(playerRefMapper.entityToDto(gameEntity.getPlayerA()))
+                        .score(gameEntity.getGameResult().getPlayerAScore())
+                        .ratingAlteration(gameEntity.getGameResult().getPlayerARatingAlteration())
                         .build())
+                .playerScoreB(PlayerScore.builder()
+                        .playerRef(playerRefMapper.entityToDto(gameEntity.getPlayerB()))
+                        .score(gameEntity.getGameResult().getPlayerBScore())
+                        .ratingAlteration(gameEntity.getGameResult().getPlayerBRatingAlteration())
+                        .build())
+                .tournamentRef(tournamentMapper.entityToDto(gameEntity.getTournament()))
+                .winnerId(gameEntity.getGameResult().getWinnerId())
                 .playedWhen(gameEntity.getPlayedWhen())
                 .build();
     }
@@ -45,15 +48,15 @@ public class GameMapper implements PersistenceMapper<Game, GameEntity> {
     public GameEntity dtoToEntity(Game game) {
         return GameEntity.builder()
                 .id(game.getId())
-                .playerA(playerRefMapper.dtoToEntity(game.getPlayerRefA()))
-                .playerB(playerRefMapper.dtoToEntity(game.getPlayerRefB()))
+                .playerA(playerRefMapper.dtoToEntity(game.getPlayerScoreA().getPlayerRef()))
+                .playerB(playerRefMapper.dtoToEntity(game.getPlayerScoreB().getPlayerRef()))
                 .tournament(tournamentMapper.dtoToEntity(game.getTournamentRef()))
                 .gameResult(GameResultEntity.builder()
-                        .winnerId(game.getGameResult().getWinnerId())
-                        .playerAScore(game.getGameResult().getPlayerAScore())
-                        .playerBScore(game.getGameResult().getPlayerBScore())
-                        .playerARatingAlteration(game.getGameResult().getPlayerARatingAlteration())
-                        .playerBRatingAlteration(game.getGameResult().getPlayerBRatingAlteration())
+                        .winnerId(game.getWinnerId())
+                        .playerAScore(game.getPlayerScoreA().getScore())
+                        .playerBScore(game.getPlayerScoreB().getScore())
+                        .playerARatingAlteration(game.getPlayerScoreA().getRatingAlteration())
+                        .playerBRatingAlteration(game.getPlayerScoreB().getRatingAlteration())
                         .build())
                 .playedWhen(game.getPlayedWhen())
                 .build();

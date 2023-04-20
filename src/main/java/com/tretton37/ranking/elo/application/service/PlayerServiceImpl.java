@@ -45,7 +45,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Page<Player> find(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+    public Page<Player> list(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
         return playerGateway.find(filteringCriteria, pageable);
     }
 

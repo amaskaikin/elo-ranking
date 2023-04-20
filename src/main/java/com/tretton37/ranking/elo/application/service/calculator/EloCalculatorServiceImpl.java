@@ -30,7 +30,7 @@ public class EloCalculatorServiceImpl implements EloCalculatorService {
                 "game: {}", playerA, playerB, game);
 
         ActualScore actualScore = getCalculatorHelper().calculateActualScore(playerA, playerB,
-                game.getGameResult().getWinnerId());
+                game.getWinnerId());
         double expectedScoreA = calculateExpectedScore(playerA.getRating(), playerB.getRating());
         double expectedScoreB = calculateExpectedScore(playerB.getRating(), playerA.getRating());
         log.debug("updateEloRatings: Actual score: {}, expected score for playerA: {}," +

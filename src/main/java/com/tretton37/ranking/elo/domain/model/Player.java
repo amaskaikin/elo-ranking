@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonMerge;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -11,12 +12,13 @@ import lombok.ToString;
 import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 @Data
 @Builder
 @ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Player {
     private UUID id;
 
@@ -32,17 +34,27 @@ public class Player {
     @JsonMerge
     private Tournament tournamentRef;
 
+    @Valid
+    private JsonNullable<Collection<Achievement>> achievements;
+
     private Integer rating;
+
+    private Double winRate;
 
     private LocalDateTime registeredWhen;
 
     @Builder.Default
     private Integer gamesPlayed = 0;
+    @Builder.Default
+    private Integer gamesWon = 0;
 
     @JsonIgnore
     private boolean reachedHighRating;
 
-    public void countGame() {
+    public void countGame(boolean win) {
         this.gamesPlayed += 1;
+        if (win) {
+            this.gamesWon += 1;
+        }
     }
 }
