@@ -16,6 +16,7 @@ Default values:
 - Java 17
 - Spring Boot 3
 - Spring Security
+- PostgreSQL
 - OpenAPI Swagger v3
 - OAuth2 Resource server configured with `Auth0` IDP
 - **EXPERIMENTAL**: GraalVM Native image support
