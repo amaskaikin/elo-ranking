@@ -6,11 +6,11 @@ import com.tretton37.ranking.elo.application.persistence.repository.TournamentRe
 import com.tretton37.ranking.elo.domain.model.Tournament;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class TournamentGateway {
@@ -25,26 +25,36 @@ public class TournamentGateway {
         this.mapper = mapper;
     }
 
-    public Optional<Tournament> getById(UUID id) {
-        return tournamentRepository.findById(id).flatMap(e -> Optional.ofNullable(mapper.entityToDto(e)));
+    public Mono<Tournament> getById(final UUID id) {
+        return Mono.fromCallable(() -> tournamentRepository.findById(id))
+                .flatMap(o -> o.map(e -> Mono.just(mapper.entityToDto(e)))
+                        .orElseGet(Mono::empty)
+                )
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public Collection<Tournament> getAll() {
-        return tournamentRepository.findAll()
-                .stream()
+    public Flux<Tournament> getAll() {
+        return Mono.fromCallable(tournamentRepository::findAll)
+                .flatMapMany(e -> Flux.fromStream(e.stream().map(mapper::entityToDto)))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public Mono<Tournament> findByName(String name) {
+        return Mono.fromCallable(() -> tournamentRepository.findByName(name))
                 .map(mapper::entityToDto)
-                .collect(Collectors.toList());
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public Tournament findByName(String name) {
-        return mapper.entityToDto(tournamentRepository.findByName(name));
-    }
-
-    public Tournament save(Tournament tournament) {
-        return mapper.entityToDto(tournamentRepository.save(mapper.dtoToEntity(tournament)));
+    public Mono<Tournament> save(Tournament tournament) {
+        return Mono.fromCallable(() -> tournamentRepository.save(mapper.dtoToEntity(tournament)))
+                .map(mapper::entityToDto)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     public void delete(UUID id) {
-        tournamentRepository.deleteById(id);
+        Mono.fromCallable(() -> {
+            tournamentRepository.deleteById(id);
+            return Mono.empty();
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }

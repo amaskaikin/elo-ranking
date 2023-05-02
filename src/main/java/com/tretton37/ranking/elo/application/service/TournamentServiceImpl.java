@@ -9,8 +9,10 @@ import com.tretton37.ranking.elo.domain.service.TournamentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -25,25 +27,30 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public Tournament getById(UUID id) {
+    public Mono<Tournament> getById(UUID id) {
         return tournamentGateway.getById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorDetails.ENTITY_NOT_FOUND,
-                        "Tournament not found by Id: " + id));
+                .switchIfEmpty(Mono.error(() -> new EntityNotFoundException(ErrorDetails.ENTITY_NOT_FOUND,
+                        "Tournament not found by Id: " + id)));
     }
 
     @Override
-    public Collection<Tournament> getAll() {
+    public Flux<Tournament> getAll() {
         return tournamentGateway.getAll();
     }
 
     @Override
-    public Tournament create(Tournament tournament) {
-        if (tournamentGateway.findByName(tournament.getName()) != null) {
-            throw new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,
-                    "Tournament with the same name already exists");
-        }
+    public Mono<Tournament> create(Tournament tournament) {
+        return tournamentGateway.findByName(tournament.getName())
+                .filter(Objects::nonNull)
+                .hasElement()
+                .flatMap(present -> {
+                    if (present) {
+                        return Mono.error(() -> new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,
+                                "Tournament with the same name already exists"));
+                    }
 
-        return tournamentGateway.save(tournament);
+                    return tournamentGateway.save(tournament);
+                });
     }
 
     @Override
