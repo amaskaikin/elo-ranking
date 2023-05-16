@@ -43,7 +43,11 @@ public class PlayerGateway {
     }
 
     public Player findByEmail(String email) {
-        return playerMapper.entityToDto(playerRepository.findByEmail(email));
+        PlayerEntity playerEntity = playerRepository.findByEmail(email);
+        if (playerEntity == null) {
+            return null;
+        }
+        return playerMapper.entityToDto(playerEntity);
     }
 
     public Collection<Player> findByNormalizedNameContaining(String name) {
