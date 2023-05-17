@@ -60,17 +60,10 @@ public class EloCalculatorServiceImplTest {
                 .reachedHighRating(false)
                 .build();
 
-        Game game = Game.builder()
-                .playerScoreA(PlayerScore.builder()
-                                .playerRef(PlayerRef.builder().id(playerIdA).build())
-                                .build()
-                )
-                .playerScoreB(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerIdB).build())
-                        .build()
-                )
-                .winnerId(playerIdA)
-                .build();
+        Game game = new Game();
+        game.setPlayerScoreA(new PlayerScore(PlayerRef.builder().id(playerIdA).build(), null, null));
+        game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerIdB).build(), null, null));
+        game.setWinnerId(playerIdA);
 
         ActualScore actualScore = mock(ActualScore.class);
         doReturn(actualScore).when(eloCalculatorHelper)

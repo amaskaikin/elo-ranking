@@ -1,6 +1,6 @@
 package com.tretton37.ranking.elo.adapter.persistence;
 
-import com.tretton37.ranking.elo.adapter.mappers.PersistenceMapper;
+import com.tretton37.ranking.elo.adapter.mappers.TournamentMapper;
 import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
 import com.tretton37.ranking.elo.application.persistence.repository.TournamentRepository;
 import com.tretton37.ranking.elo.domain.model.Tournament;
@@ -31,7 +31,7 @@ public class TournamentGatewayTest {
     @Mock
     private TournamentRepository tournamentRepository;
     @Mock
-    private PersistenceMapper<Tournament, TournamentEntity> mapper;
+    private TournamentMapper mapper;
 
     @InjectMocks
     private TournamentGateway tournamentGateway;

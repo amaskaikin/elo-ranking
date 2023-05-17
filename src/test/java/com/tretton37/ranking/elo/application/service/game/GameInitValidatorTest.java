@@ -26,19 +26,11 @@ public class GameInitValidatorTest {
         UUID playerAId = UUID.randomUUID();
         UUID playerBId = UUID.randomUUID();
 
-        Game game = Game.builder()
-                .playerScoreA(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerAId).build())
-                        .score(10)
-                        .build()
-                )
-                .playerScoreB(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerBId).build())
-                        .score(5)
-                        .build()
-                )
-                .winnerId(playerAId)
-                .build();
+        Game game = new Game();
+        game.setPlayerScoreA(new PlayerScore(PlayerRef.builder().id(playerAId).build(), 10, null));
+        game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerBId).build(), 5, null));
+        game.setWinnerId(playerAId);
+
         validator.validate(game, mock(Player.class), mock(Player.class));
     }
 
@@ -47,19 +39,11 @@ public class GameInitValidatorTest {
         UUID playerAId = UUID.randomUUID();
         UUID playerBId = UUID.randomUUID();
 
-        Game game = Game.builder()
-                .playerScoreA(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerAId).build())
-                        .score(10)
-                        .build()
-                )
-                .playerScoreB(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerBId).build())
-                        .score(5)
-                        .build()
-                )
-                .winnerId(playerBId)
-                .build();
+        Game game = new Game();
+        game.setPlayerScoreA(new PlayerScore(PlayerRef.builder().id(playerAId).build(), 10, null));
+        game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerBId).build(), 5, null));
+        game.setWinnerId(playerBId);
+
         assertThrows(RequestConsistencyException.class, () ->
                 validator.validate(game, mock(Player.class), mock(Player.class)));
 

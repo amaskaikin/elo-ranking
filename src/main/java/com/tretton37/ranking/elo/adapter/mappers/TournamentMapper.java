@@ -2,23 +2,10 @@ package com.tretton37.ranking.elo.adapter.mappers;
 
 import com.tretton37.ranking.elo.domain.model.Tournament;
 import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class TournamentMapper implements PersistenceMapper<Tournament, TournamentEntity> {
-    @Override
-    public Tournament entityToDto(TournamentEntity tournamentEntity) {
-        if (tournamentEntity == null) {
-            return null;
-        }
-        return new Tournament(tournamentEntity.getId(), tournamentEntity.getName());
-    }
-
-    @Override
-    public TournamentEntity dtoToEntity(Tournament tournament) {
-        if (tournament == null) {
-            return null;
-        }
-        return new TournamentEntity(tournament.getId(), tournament.getName());
-    }
+@Mapper(componentModel = "spring")
+public interface TournamentMapper {
+    Tournament entityToDto(TournamentEntity tournamentEntity);
+    TournamentEntity dtoToEntity(Tournament tournament);
 }

@@ -1,7 +1,6 @@
 package com.tretton37.ranking.elo.adapter.persistence;
 
-import com.tretton37.ranking.elo.adapter.mappers.PersistenceMapper;
-import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
+import com.tretton37.ranking.elo.adapter.mappers.TournamentMapper;
 import com.tretton37.ranking.elo.application.persistence.repository.TournamentRepository;
 import com.tretton37.ranking.elo.domain.model.Tournament;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,11 @@ import java.util.stream.Collectors;
 public class TournamentGateway {
 
     private final TournamentRepository tournamentRepository;
-    private final PersistenceMapper<Tournament, TournamentEntity> mapper;
+    private final TournamentMapper mapper;
 
     @Autowired
     public TournamentGateway(TournamentRepository tournamentRepository,
-                             PersistenceMapper<Tournament, TournamentEntity> mapper) {
+                             TournamentMapper mapper) {
         this.tournamentRepository = tournamentRepository;
         this.mapper = mapper;
     }
