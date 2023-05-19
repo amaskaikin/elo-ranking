@@ -65,19 +65,12 @@ public class GameRegistrationHandlerImplTest {
         UUID playerIdB = UUID.randomUUID();
         Player playerA = Player.builder().id(playerIdA).rating(1000).build();
         Player playerB = Player.builder().id(playerIdB).rating(1000).build();
-        Game game = Game.builder()
-                .playerScoreA(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerIdA).build())
-                        .score(2)
-                        .build()
-                )
-                .playerScoreB(PlayerScore.builder()
-                        .playerRef(PlayerRef.builder().id(playerIdB).build())
-                        .score(1)
-                        .build()
-                )
-                .winnerId(playerIdA)
-                .build();
+
+        Game game = new Game();
+        game.setPlayerScoreA(new PlayerScore(PlayerRef.builder().id(playerIdA).build(), 2, null));
+        game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerIdB).build(), 1, null));
+        game.setWinnerId(playerIdA);
+
         when(eloCalculatorService.calculateRatings(playerA, playerB, game))
                 .thenReturn(Map.of(playerA, 1020, playerB, 980));
 

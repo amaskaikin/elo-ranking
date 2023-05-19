@@ -7,10 +7,9 @@ import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.exception.EntityAlreadyExistsException;
 import com.tretton37.ranking.elo.domain.model.exception.EntityNotFoundException;
 import com.tretton37.ranking.elo.domain.model.exception.ErrorDetails;
-import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
+import com.tretton37.ranking.elo.domain.model.search.PlayerFilteringCriteria;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 
 @Service
@@ -45,21 +43,13 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public Page<Player> list(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+    public Page<Player> list(PlayerFilteringCriteria filteringCriteria, Pageable pageable) {
         return playerGateway.find(filteringCriteria, pageable);
     }
 
     @Override
-    public Collection<Player> find(String email, String name) {
-        if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(name)) {
-            throw new UnsupportedOperationException("Either email or name should be specified. " +
-                    "Search by both parameters is not supported");
-        }
-        if (StringUtils.isNotEmpty(email)) {
-            return Collections.singletonList(playerGateway.findByEmail(email));
-        }
-
-        return playerGateway.findByNormalizedNameContaining(name);
+    public Collection<Player> find(PlayerFilteringCriteria filteringCriteria) {
+        return playerGateway.find(filteringCriteria);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.application.persistence.repository.PlayerRepository;
 import com.tretton37.ranking.elo.application.persistence.specification.PlayerSpecificationBuilder;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
+import com.tretton37.ranking.elo.domain.model.search.PlayerFilteringCriteria;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,16 @@ public class PlayerGateway {
         this.playerMapper = playerMapper;
     }
 
-    public Page<Player> find(PlayerListFilteringCriteria filteringCriteria, Pageable pageable) {
+    public Collection<Player> find(PlayerFilteringCriteria filteringCriteria) {
+        return playerRepository.findAll(PlayerSpecificationBuilder
+                        .forCriteria(filteringCriteria)
+                        .build())
+                .stream()
+                .map(playerMapper::entityToDto)
+                .toList();
+    }
+
+    public Page<Player> find(PlayerFilteringCriteria filteringCriteria, Pageable pageable) {
         return playerRepository.findAll(PlayerSpecificationBuilder
                         .forCriteria(filteringCriteria)
                         .build(), pageable)
@@ -48,13 +57,6 @@ public class PlayerGateway {
             return null;
         }
         return playerMapper.entityToDto(playerEntity);
-    }
-
-    public Collection<Player> findByNormalizedNameContaining(String name) {
-        return playerRepository.findAllByNormalizedName(name)
-                .stream()
-                .map(playerMapper::entityToDto)
-                .collect(Collectors.toList());
     }
 
     public Player save(Player player) {

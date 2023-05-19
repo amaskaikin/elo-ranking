@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.tretton37.ranking.elo.adapter.persistence.PlayerGateway;
-import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
+import com.tretton37.ranking.elo.domain.model.search.PlayerFilteringCriteria;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +23,8 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,8 +51,8 @@ public class PlayerServiceImplTest {
 
     @Test
     public void testList() {
-        PlayerListFilteringCriteria filteringCriteria =
-                new PlayerListFilteringCriteria(UUID.randomUUID(), 1);
+        PlayerFilteringCriteria filteringCriteria =
+                new PlayerFilteringCriteria(UUID.randomUUID(), 1, null, null);
 
         playerService.list(filteringCriteria, Pageable.unpaged());
 
@@ -64,32 +60,13 @@ public class PlayerServiceImplTest {
     }
 
     @Test
-    public void testFind_byName() {
-        String searchName = "player";
-        doReturn(Collections.singletonList(mock(PlayerEntity.class)))
-                .when(playerGateway).findByNormalizedNameContaining(eq(searchName));
+    public void testFind() {
+        PlayerFilteringCriteria filteringCriteria =
+                new PlayerFilteringCriteria(UUID.randomUUID(), null, "test@mail.com", "An Ma");
 
-        Collection<Player> result = playerService.find(null, searchName);
+        playerService.find(filteringCriteria);
 
-        verify(playerGateway).findByNormalizedNameContaining(searchName);
-        assertThat(result, hasSize(1));
-    }
-
-    @Test
-    public void testFind_byEmail() {
-        String searchEmail = "test@mail.com";
-        doReturn(mock(Player.class)).when(playerGateway).findByEmail(eq(searchEmail));
-
-        Collection<Player> result = playerService.find(searchEmail, null);
-
-        verify(playerGateway).findByEmail(searchEmail);
-        assertThat(result, hasSize(1));
-    }
-
-    @Test
-    public void testFind_byEmailAndName() {
-        assertThrows(UnsupportedOperationException.class, () ->
-                playerService.find("abc@mail.com", "abc"));
+        verify(playerGateway).find(eq(filteringCriteria));
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.tretton37.ranking.elo.adapter.persistence;
 
-import com.tretton37.ranking.elo.adapter.mappers.PersistenceMapper;
+import com.tretton37.ranking.elo.adapter.mappers.GameMapper;
 import com.tretton37.ranking.elo.application.persistence.entity.GameEntity;
 import com.tretton37.ranking.elo.application.persistence.repository.GameRepository;
 import com.tretton37.ranking.elo.domain.model.Game;
@@ -35,7 +35,7 @@ public class GameGatewayTest {
     @Mock
     private GameRepository gameRepository;
     @Mock
-    private PersistenceMapper<Game, GameEntity> mapper;
+    private GameMapper mapper;
     @Mock
     private Page<GameEntity> pageEntityMock;
 

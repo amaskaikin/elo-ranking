@@ -2,7 +2,7 @@ package com.tretton37.ranking.elo.adapter.web;
 
 import com.tretton37.ranking.elo.adapter.web.model.PageResponse;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
+import com.tretton37.ranking.elo.domain.model.search.PlayerFilteringCriteria;
 import com.tretton37.ranking.elo.adapter.web.model.ErrorResponse;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,10 +66,10 @@ public class PlayerController {
                                                    @SortDefault(sort = "rating", direction = Sort.Direction.DESC),
                                                    @SortDefault(sort = "name", direction = Sort.Direction.ASC),
                                            }) Pageable page,
-                                           @RequestParam(required = false) UUID tournamentId,
+                                           @RequestParam(required = false) UUID locationId,
                                            @RequestParam(required = false) Integer minGamesPlayed) {
         return new PageResponse<>(playerService.list(
-                new PlayerListFilteringCriteria(tournamentId, minGamesPlayed), page));
+                new PlayerFilteringCriteria(locationId, minGamesPlayed, null, null), page));
     }
 
     @Operation(summary = "Find players by specified criteria")
@@ -83,9 +83,10 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Player> findPlayers(@RequestParam(required = false) String email,
+    public Collection<Player> findPlayers(@RequestParam(required = false) UUID locationId,
+                                          @RequestParam(required = false) String email,
                                           @RequestParam(required = false) String name) {
-        return playerService.find(email, name);
+        return playerService.find(new PlayerFilteringCriteria(locationId, null, email, name));
     }
 
     @ApiResponses(value = {
@@ -161,7 +162,7 @@ public class PlayerController {
                                     {
                                       "name": "Name Surname",
                                       "email": "name.surname@mail.test",
-                                      "tournamentRef": {
+                                      "locationRef": {
                                           "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                       }
                                     }
@@ -194,14 +195,14 @@ public class PlayerController {
                                         {
                                             "name": "NameA SurnameA",
                                             "email": "nameA.surnameA@mail.test",
-                                            "tournamentRef": {
+                                            "locationRef": {
                                                 "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                             }
                                         },
                                         {
                                             "name": "NameB SurnameB",
                                             "email": "nameB.surnameB@mail.test",
-                                            "tournamentRef": {
+                                            "locationRef": {
                                                 "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                             }
                                         }

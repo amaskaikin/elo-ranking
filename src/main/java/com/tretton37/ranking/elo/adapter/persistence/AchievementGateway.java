@@ -1,7 +1,6 @@
 package com.tretton37.ranking.elo.adapter.persistence;
 
-import com.tretton37.ranking.elo.adapter.mappers.PersistenceMapper;
-import com.tretton37.ranking.elo.application.persistence.entity.AchievementEntity;
+import com.tretton37.ranking.elo.adapter.mappers.AchievementMapper;
 import com.tretton37.ranking.elo.application.persistence.repository.AchievementRepository;
 import com.tretton37.ranking.elo.domain.model.Achievement;
 import com.tretton37.ranking.elo.domain.model.AchievementDef;
@@ -17,11 +16,11 @@ import java.util.stream.Collectors;
 public class AchievementGateway {
 
     private final AchievementRepository achievementRepository;
-    private final PersistenceMapper<Achievement, AchievementEntity> mapper;
+    private final AchievementMapper mapper;
 
     @Autowired
     public AchievementGateway(AchievementRepository achievementRepository,
-                              PersistenceMapper<Achievement, AchievementEntity> mapper) {
+                              AchievementMapper mapper) {
         this.achievementRepository = achievementRepository;
         this.mapper = mapper;
     }

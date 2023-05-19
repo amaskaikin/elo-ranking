@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonMerge;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.openapitools.jackson.nullable.JsonNullable;
 
@@ -17,37 +19,29 @@ import java.util.UUID;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Player {
     private UUID id;
-
     @NotEmpty
     private String name;
-
     @NotEmpty
     private String email;
-
     private JsonNullable<String> profileImage;
-
     @NotNull
     @JsonMerge
-    private Tournament tournamentRef;
-
+    private Location locationRef;
     @Valid
     private JsonNullable<Collection<Achievement>> achievements;
-
     private Integer rating;
-
     private Double winRate;
-
     private LocalDateTime registeredWhen;
-
     @Builder.Default
     private Integer gamesPlayed = 0;
     @Builder.Default
     private Integer gamesWon = 0;
-
     @JsonIgnore
     private boolean reachedHighRating;
 

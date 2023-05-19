@@ -12,7 +12,7 @@ import java.util.UUID;
 @ToString
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Tournament {
+public class Location {
     private UUID id;
     @NotEmpty
     private String name;

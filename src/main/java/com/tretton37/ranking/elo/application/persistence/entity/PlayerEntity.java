@@ -11,7 +11,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +21,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "player")
@@ -41,8 +39,8 @@ public class PlayerEntity {
     private Integer rating;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament_id", nullable = false)
-    private TournamentEntity tournament;
+    @JoinColumn(name = "location_id", nullable = false)
+    private LocationEntity location;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "player_achievement",

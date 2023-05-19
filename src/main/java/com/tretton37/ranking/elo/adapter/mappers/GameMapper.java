@@ -1,64 +1,31 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
-import com.tretton37.ranking.elo.domain.model.Game;
-import com.tretton37.ranking.elo.domain.model.PlayerScore;
-import com.tretton37.ranking.elo.domain.model.PlayerRef;
-import com.tretton37.ranking.elo.domain.model.Tournament;
 import com.tretton37.ranking.elo.application.persistence.entity.GameEntity;
-import com.tretton37.ranking.elo.application.persistence.entity.GameResultEntity;
-import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
-import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.tretton37.ranking.elo.domain.model.Game;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Component
-public class GameMapper implements PersistenceMapper<Game, GameEntity> {
+@Mapper(injectionStrategy = InjectionStrategy.CONSTRUCTOR, componentModel = "spring",
+        uses = {PlayerRefMapper.class, LocationMapper.class})
+public abstract class GameMapper {
 
-    private final PersistenceMapper<PlayerRef, PlayerEntity> playerRefMapper;
-    private final PersistenceMapper<Tournament, TournamentEntity> tournamentMapper;
-
-    @Autowired
-    public GameMapper(PersistenceMapper<PlayerRef, PlayerEntity> playerRefMapper,
-                      PersistenceMapper<Tournament, TournamentEntity> tournamentMapper) {
-        this.playerRefMapper = playerRefMapper;
-        this.tournamentMapper = tournamentMapper;
-    }
-
-    @Override
-    public Game entityToDto(GameEntity gameEntity) {
-        return Game.builder()
-                .id(gameEntity.getId())
-                .playerScoreA(PlayerScore.builder()
-                        .playerRef(playerRefMapper.entityToDto(gameEntity.getPlayerA()))
-                        .score(gameEntity.getGameResult().getPlayerAScore())
-                        .ratingAlteration(gameEntity.getGameResult().getPlayerARatingAlteration())
-                        .build())
-                .playerScoreB(PlayerScore.builder()
-                        .playerRef(playerRefMapper.entityToDto(gameEntity.getPlayerB()))
-                        .score(gameEntity.getGameResult().getPlayerBScore())
-                        .ratingAlteration(gameEntity.getGameResult().getPlayerBRatingAlteration())
-                        .build())
-                .tournamentRef(tournamentMapper.entityToDto(gameEntity.getTournament()))
-                .winnerId(gameEntity.getGameResult().getWinnerId())
-                .playedWhen(gameEntity.getPlayedWhen())
-                .build();
-    }
-
-    @Override
-    public GameEntity dtoToEntity(Game game) {
-        return GameEntity.builder()
-                .id(game.getId())
-                .playerA(playerRefMapper.dtoToEntity(game.getPlayerScoreA().getPlayerRef()))
-                .playerB(playerRefMapper.dtoToEntity(game.getPlayerScoreB().getPlayerRef()))
-                .tournament(tournamentMapper.dtoToEntity(game.getTournamentRef()))
-                .gameResult(GameResultEntity.builder()
-                        .winnerId(game.getWinnerId())
-                        .playerAScore(game.getPlayerScoreA().getScore())
-                        .playerBScore(game.getPlayerScoreB().getScore())
-                        .playerARatingAlteration(game.getPlayerScoreA().getRatingAlteration())
-                        .playerBRatingAlteration(game.getPlayerScoreB().getRatingAlteration())
-                        .build())
-                .playedWhen(game.getPlayedWhen())
-                .build();
-    }
+    @Mapping(source = "gameResult.winnerId", target = "winnerId")
+    @Mapping(source = "location", target = "locationRef")
+    @Mapping(source = "playerA", target = "playerScoreA.playerRef")
+    @Mapping(source = "gameResult.playerAScore", target = "playerScoreA.score")
+    @Mapping(source = "gameResult.playerARatingAlteration", target = "playerScoreA.ratingAlteration")
+    @Mapping(source = "playerB", target = "playerScoreB.playerRef")
+    @Mapping(source = "gameResult.playerBScore", target = "playerScoreB.score")
+    @Mapping(source = "gameResult.playerBRatingAlteration", target = "playerScoreB.ratingAlteration")
+    public abstract Game entityToDto(GameEntity gameEntity);
+    @Mapping(source = "locationRef", target = "location")
+    @Mapping(source = "playerScoreA.playerRef", target = "playerA")
+    @Mapping(source = "playerScoreB.playerRef", target = "playerB")
+    @Mapping(source = "winnerId", target = "gameResult.winnerId")
+    @Mapping(source = "playerScoreA.score", target = "gameResult.playerAScore")
+    @Mapping(source = "playerScoreB.score", target = "gameResult.playerBScore")
+    @Mapping(source = "playerScoreA.ratingAlteration", target = "gameResult.playerARatingAlteration")
+    @Mapping(source = "playerScoreB.ratingAlteration", target = "gameResult.playerBRatingAlteration")
+    public abstract GameEntity dtoToEntity(Game game);
 }

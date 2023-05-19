@@ -15,8 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "tournament")
-public class TournamentEntity {
+@Entity(name = "location")
+public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

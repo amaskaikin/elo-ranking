@@ -50,7 +50,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public void delete(UUID id) {
-        log.info("delete: Deleting tournament: {}", id);
+        log.info("delete: Deleting achievement: {}", id);
         achievementGateway.delete(id);
     }
 }

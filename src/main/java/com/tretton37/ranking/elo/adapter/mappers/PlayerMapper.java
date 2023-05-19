@@ -1,86 +1,79 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
+import com.tretton37.ranking.elo.adapter.mappers.helpers.JsonNullableWrapper;
 import com.tretton37.ranking.elo.application.persistence.entity.AchievementEntity;
+import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.domain.model.Achievement;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.Tournament;
-import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
-import com.tretton37.ranking.elo.application.persistence.entity.TournamentEntity;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
-public class PlayerMapper implements PersistenceMapper<Player, PlayerEntity> {
-
-    private final PersistenceMapper<Tournament, TournamentEntity> tournamentMapper;
-    private final PersistenceMapper<Achievement, AchievementEntity> achievementMapper;
-    private final JsonNullableMapper jsonNullableMapper;
-
+// disable builder for Mapstruct as Lombok @Builder conflicts with Mapstruct @AfterMapping
+@Mapper(componentModel = "spring", uses = {LocationMapper.class}, builder = @Builder(disableBuilder = true))
+public abstract class PlayerMapper {
     @Autowired
-    public PlayerMapper(PersistenceMapper<Tournament, TournamentEntity> tournamentMapper,
-                        PersistenceMapper<Achievement, AchievementEntity> achievementMapper,
-                        JsonNullableMapper jsonNullableMapper) {
-        this.tournamentMapper = tournamentMapper;
-        this.achievementMapper = achievementMapper;
-        this.jsonNullableMapper = jsonNullableMapper;
-    }
+    protected AchievementMapper achievementMapper;
 
-    @Override
-    public Player entityToDto(PlayerEntity playerEntity) {
-        return Player.builder()
-                .id(playerEntity.getId())
-                .name(playerEntity.getName())
-                .email(playerEntity.getEmail())
-                .profileImage(jsonNullableMapper.wrap(playerEntity.getProfileImage()))
-                .tournamentRef(tournamentMapper.entityToDto(playerEntity.getTournament()))
-                .achievements(jsonNullableMapper.wrap(
-                        Stream.ofNullable(playerEntity.getAchievements())
-                                .flatMap(Collection::stream)
-                                .map(achievementMapper::entityToDto)
-                                .collect(Collectors.toSet()))
-                )
-                .rating(playerEntity.getRating())
-                .registeredWhen(playerEntity.getRegisteredWhen())
-                .gamesPlayed(playerEntity.getGamesPlayed())
-                .gamesWon(playerEntity.getGamesWon())
-                .winRate(calculateWinRate(playerEntity))
-                .reachedHighRating(playerEntity.isReachedHighRating())
-                .build();
-    }
+    @Mapping(source = "profileImage", target = "profileImage", qualifiedByName = "wrappedProfileImage")
+    @Mapping(source = "achievements", target = "achievements", qualifiedByName = "wrappedAchievements")
+    @Mapping(source = "location", target = "locationRef")
+    @Mapping(target = "winRate", ignore = true)
+    public abstract Player entityToDto(PlayerEntity playerEntity);
 
-    @Override
-    public PlayerEntity dtoToEntity(Player player) {
-        return PlayerEntity.builder()
-                .id(player.getId())
-                .name(player.getName())
-                .email(player.getEmail())
-                .profileImage(jsonNullableMapper.unwrap(player.getProfileImage()))
-                .tournament(tournamentMapper.dtoToEntity(player.getTournamentRef()))
-                .achievements(Stream.ofNullable(jsonNullableMapper.unwrap(player.getAchievements()))
+    @Mapping(source = "profileImage", target = "profileImage", qualifiedByName = "unwrappedProfileImage")
+    @Mapping(source = "achievements", target = "achievements", qualifiedByName = "unwrappedAchievements")
+    @Mapping(source = "locationRef", target = "location")
+    @Mapping(source = "gamesPlayed", target = "gamesPlayed", defaultValue = "0")
+    @Mapping(source = "gamesWon", target = "gamesWon", defaultValue = "0")
+    public abstract PlayerEntity dtoToEntity(Player player);
+
+    @Named("wrappedAchievements")
+    protected JsonNullable<Collection<Achievement>> wrappedAchievements(Set<AchievementEntity> achievementEntities) {
+        return JsonNullableWrapper.wrap(
+                Stream.ofNullable(achievementEntities)
                         .flatMap(Collection::stream)
-                        .map(achievementMapper::dtoToEntity)
-                        .collect(Collectors.toSet()))
-                .rating(player.getRating())
-                .registeredWhen(player.getRegisteredWhen())
-                .reachedHighRating(player.isReachedHighRating())
-                .gamesPlayed(Optional.ofNullable(player.getGamesPlayed()).orElse(0))
-                .gamesWon(Optional.ofNullable(player.getGamesWon()).orElse(0))
-                .build();
+                        .map(achievementMapper::entityToDto)
+                        .collect(Collectors.toSet())
+        );
     }
 
-    private double calculateWinRate(PlayerEntity entity) {
-        if (entity.getGamesPlayed() == 0) {
-            return 0;
+    @Named("unwrappedAchievements")
+    protected Set<AchievementEntity> unwrappedAchievements(JsonNullable<Collection<Achievement>> achievements) {
+        return Stream.ofNullable(JsonNullableWrapper.unwrap(achievements))
+                .flatMap(Collection::stream)
+                .map(achievementMapper::dtoToEntity)
+                .collect(Collectors.toSet());
+    }
+
+    @Named("wrappedProfileImage")
+    protected JsonNullable<String> wrappedProfileImage(String profileImage) {
+        return JsonNullableWrapper.wrap(profileImage);
+    }
+
+    @Named("unwrappedProfileImage")
+    protected String unwrappedProfileImage(JsonNullable<String> wrapped) {
+        return JsonNullableWrapper.unwrap(wrapped);
+    }
+
+    @AfterMapping
+    protected void afterMappingHandler(@MappingTarget Player player) {
+        if (player.getGamesPlayed() != 0) {
+            player.setWinRate(BigDecimal.valueOf((double) player.getGamesWon() / player.getGamesPlayed())
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .doubleValue());
         }
-        return BigDecimal.valueOf((double) entity.getGamesWon() / entity.getGamesPlayed())
-                .setScale(2, RoundingMode.HALF_UP)
-                .doubleValue();
     }
 }
