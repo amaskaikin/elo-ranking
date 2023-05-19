@@ -2,7 +2,7 @@ package com.tretton37.ranking.elo.adapter.web;
 
 import com.tretton37.ranking.elo.adapter.web.model.PageResponse;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.model.search.PlayerListFilteringCriteria;
+import com.tretton37.ranking.elo.domain.model.search.PlayerFilteringCriteria;
 import com.tretton37.ranking.elo.adapter.web.model.ErrorResponse;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,7 +69,7 @@ public class PlayerController {
                                            @RequestParam(required = false) UUID tournamentId,
                                            @RequestParam(required = false) Integer minGamesPlayed) {
         return new PageResponse<>(playerService.list(
-                new PlayerListFilteringCriteria(tournamentId, minGamesPlayed), page));
+                new PlayerFilteringCriteria(tournamentId, minGamesPlayed, null, null), page));
     }
 
     @Operation(summary = "Find players by specified criteria")
@@ -83,9 +83,10 @@ public class PlayerController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Player> findPlayers(@RequestParam(required = false) String email,
+    public Collection<Player> findPlayers(@RequestParam(required = false) UUID tournamentId,
+                                          @RequestParam(required = false) String email,
                                           @RequestParam(required = false) String name) {
-        return playerService.find(email, name);
+        return playerService.find(new PlayerFilteringCriteria(tournamentId, null, email, name));
     }
 
     @ApiResponses(value = {
