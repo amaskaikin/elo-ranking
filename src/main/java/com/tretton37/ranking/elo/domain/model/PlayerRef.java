@@ -16,5 +16,4 @@ public class PlayerRef {
     @NotNull
     private UUID id;
     private String name;
-    private Integer rating;
 }
