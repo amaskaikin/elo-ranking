@@ -32,7 +32,7 @@ public class Player {
     private JsonNullable<String> profileImage;
     @NotNull
     @JsonMerge
-    private Tournament tournamentRef;
+    private Location locationRef;
     @Valid
     private JsonNullable<Collection<Achievement>> achievements;
     private Integer rating;

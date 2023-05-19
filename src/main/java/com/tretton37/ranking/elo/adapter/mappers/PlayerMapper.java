@@ -22,20 +22,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // disable builder for Mapstruct as Lombok @Builder conflicts with Mapstruct @AfterMapping
-@Mapper(componentModel = "spring", uses = {TournamentMapper.class}, builder = @Builder(disableBuilder = true))
+@Mapper(componentModel = "spring", uses = {LocationMapper.class}, builder = @Builder(disableBuilder = true))
 public abstract class PlayerMapper {
     @Autowired
     protected AchievementMapper achievementMapper;
 
     @Mapping(source = "profileImage", target = "profileImage", qualifiedByName = "wrappedProfileImage")
     @Mapping(source = "achievements", target = "achievements", qualifiedByName = "wrappedAchievements")
-    @Mapping(source = "tournament", target = "tournamentRef")
+    @Mapping(source = "location", target = "locationRef")
     @Mapping(target = "winRate", ignore = true)
     public abstract Player entityToDto(PlayerEntity playerEntity);
 
     @Mapping(source = "profileImage", target = "profileImage", qualifiedByName = "unwrappedProfileImage")
     @Mapping(source = "achievements", target = "achievements", qualifiedByName = "unwrappedAchievements")
-    @Mapping(source = "tournamentRef", target = "tournament")
+    @Mapping(source = "locationRef", target = "location")
     @Mapping(source = "gamesPlayed", target = "gamesPlayed", defaultValue = "0")
     @Mapping(source = "gamesWon", target = "gamesWon", defaultValue = "0")
     public abstract PlayerEntity dtoToEntity(Player player);

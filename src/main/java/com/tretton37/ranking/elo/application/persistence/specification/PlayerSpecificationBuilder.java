@@ -22,18 +22,18 @@ public class PlayerSpecificationBuilder {
     }
 
     public Specification<PlayerEntity> build() {
-        return where(tournamentIs(filteringCriteria.tournamentId()))
+        return where(locationIs(filteringCriteria.locationId()))
                 .and(minGamesPlayed(filteringCriteria.gamesPlayed()))
                 .and(emailIs(filteringCriteria.email()))
                 .and(nameNormalizedContaining(filteringCriteria.name()));
     }
 
-    private Specification<PlayerEntity> tournamentIs(final UUID tournamentId) {
-        if (tournamentId == null) {
+    private Specification<PlayerEntity> locationIs(final UUID locationId) {
+        if (locationId == null) {
             return null;
         }
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("tournament").get("id"), tournamentId);
+                criteriaBuilder.equal(root.get("location").get("id"), locationId);
     }
 
     private Specification<PlayerEntity> minGamesPlayed(final Integer value) {

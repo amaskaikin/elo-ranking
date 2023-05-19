@@ -60,9 +60,9 @@ public class AchievementController {
                                     }
                                     """)
             }))
-            @Valid @RequestBody Achievement tournamentDto) {
+            @Valid @RequestBody Achievement achievement) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(achievementService.create(tournamentDto));
+                .body(achievementService.create(achievement));
     }
 
     @ApiResponses(value = {

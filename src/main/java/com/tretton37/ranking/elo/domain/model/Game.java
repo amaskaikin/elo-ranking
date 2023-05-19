@@ -21,7 +21,7 @@ public class Game {
     private PlayerScore playerScoreB;
 
     @NotNull
-    private Tournament tournamentRef;
+    private Location locationRef;
 
     private UUID winnerId;
 

@@ -1,8 +1,8 @@
 package com.tretton37.ranking.elo.adapter.web;
 
-import com.tretton37.ranking.elo.domain.model.Tournament;
+import com.tretton37.ranking.elo.domain.model.Location;
 import com.tretton37.ranking.elo.adapter.web.model.ErrorResponse;
-import com.tretton37.ranking.elo.domain.service.TournamentService;
+import com.tretton37.ranking.elo.domain.service.LocationService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,20 +25,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.UUID;
 
-@Tag(name = "tournament", description = "Tournament management API")
+@Tag(name = "location", description = "Location management API")
 @RestController
-@RequestMapping("/tournament")
-public class TournamentController {
+@RequestMapping("/location")
+public class LocationController {
 
-    private final TournamentService tournamentService;
+    private final LocationService locationService;
 
     @Autowired
-    public TournamentController(TournamentService tournamentService) {
-        this.tournamentService = tournamentService;
+    public LocationController(LocationService locationService) {
+        this.locationService = locationService;
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created Tournament"),
+            @ApiResponse(responseCode = "201", description = "Created Location"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
@@ -48,24 +48,24 @@ public class TournamentController {
     })
     @PostMapping(value = "create", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Tournament> createTournament(@io.swagger.v3.oas.annotations.parameters.RequestBody(
+    public ResponseEntity<Location> createLocation(@io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {
                     @ExampleObject(
-                            name = "Create tournament request",
-                            description = "Only tournament name is required for creation",
+                            name = "Create location request",
+                            description = "Only location name is required for creation",
                             value = """
                                     {
                                       "name": "Stockholm"
                                     }
                                     """)
             }))
-            @Valid @RequestBody Tournament tournamentDto) {
+            @Valid @RequestBody Location locationDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(tournamentService.create(tournamentDto));
+                .body(locationService.create(locationDto));
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of all tournaments"),
+            @ApiResponse(responseCode = "200", description = "List of all locations"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
@@ -74,16 +74,16 @@ public class TournamentController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<Tournament> getAllTournaments() {
-        return tournamentService.getAll();
+    public Collection<Location> getAllLocations() {
+        return locationService.getAll();
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Requested tournament"),
+            @ApiResponse(responseCode = "200", description = "Requested location"),
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Tournament not found",
+            @ApiResponse(responseCode = "404", description = "Location not found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -91,13 +91,13 @@ public class TournamentController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Tournament getTournament(@PathVariable UUID id) {
-        return tournamentService.getById(id);
+    public Location getLocation(@PathVariable UUID id) {
+        return locationService.getById(id);
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tournament successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "Tournament not found",
+            @ApiResponse(responseCode = "200", description = "Location successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Location not found",
                     content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ErrorResponse.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -105,8 +105,8 @@ public class TournamentController {
                             schema = @Schema(implementation = ErrorResponse.class))})
     })
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteTournament(@PathVariable UUID id) {
-        tournamentService.delete(id);
+    public ResponseEntity<Void> deleteLocation(@PathVariable UUID id) {
+        locationService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

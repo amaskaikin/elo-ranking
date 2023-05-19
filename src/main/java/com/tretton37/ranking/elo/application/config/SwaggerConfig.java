@@ -48,10 +48,10 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public GroupedOpenApi tournamentApi() {
+    public GroupedOpenApi locationApi() {
         return GroupedOpenApi.builder()
-                .group("Tournament API")
-                .pathsToMatch("/tournament/**")
+                .group("Location API")
+                .pathsToMatch("/location/**")
                 .build();
     }
 

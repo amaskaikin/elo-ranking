@@ -79,8 +79,8 @@ public class GameController {
             direction = Sort.Direction.DESC) @ParameterObject Pageable page,
                                         @RequestParam(required = false) Collection<UUID> playerIds,
                                         @RequestParam(required = false) UUID winnerId,
-                                        @RequestParam(required = false) UUID tournamentId) {
-        GameSearchCriteria criteria = new GameSearchCriteria(playerIds, winnerId, tournamentId);
+                                        @RequestParam(required = false) UUID locationId) {
+        GameSearchCriteria criteria = new GameSearchCriteria(playerIds, winnerId, locationId);
         log.debug("Request /find: criteria={}, page={}", criteria, page);
 
         return new PageResponse<>(gameService.find(criteria, page));
@@ -137,7 +137,7 @@ public class GameController {
                                             },
                                             "score": 11
                                         },
-                                        "tournamentRef": {
+                                        "locationRef": {
                                             "id": "c81c5e26-33c7-4eca-8c0f-9a11f9a24e05"
                                         }
                                     }

@@ -31,7 +31,7 @@ public class GameSpecificationBuilder {
                         .collect(Collectors.toSet())
                 )
                 .and(winnerIs(gameSearchCriteria.winnerId()))
-                .and(tournamentIs(gameSearchCriteria.tournamentId()))
+                .and(locationIs(gameSearchCriteria.locationId()))
         );
     }
 
@@ -51,11 +51,11 @@ public class GameSpecificationBuilder {
                         .get("winnerId"), winnerId);
     }
 
-    private Specification<GameEntity> tournamentIs(UUID tournamentId) {
-        if (tournamentId == null) {
+    private Specification<GameEntity> locationIs(UUID locationId) {
+        if (locationId == null) {
             return null;
         }
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("tournament").get("id"), tournamentId);
+                criteriaBuilder.equal(root.get("location").get("id"), locationId);
     }
 }

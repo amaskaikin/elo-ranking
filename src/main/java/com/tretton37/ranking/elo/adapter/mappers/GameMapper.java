@@ -7,11 +7,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(injectionStrategy = InjectionStrategy.CONSTRUCTOR, componentModel = "spring",
-        uses = {PlayerRefMapper.class, TournamentMapper.class})
+        uses = {PlayerRefMapper.class, LocationMapper.class})
 public abstract class GameMapper {
 
     @Mapping(source = "gameResult.winnerId", target = "winnerId")
-    @Mapping(source = "tournament", target = "tournamentRef")
+    @Mapping(source = "location", target = "locationRef")
     @Mapping(source = "playerA", target = "playerScoreA.playerRef")
     @Mapping(source = "gameResult.playerAScore", target = "playerScoreA.score")
     @Mapping(source = "gameResult.playerARatingAlteration", target = "playerScoreA.ratingAlteration")
@@ -19,7 +19,7 @@ public abstract class GameMapper {
     @Mapping(source = "gameResult.playerBScore", target = "playerScoreB.score")
     @Mapping(source = "gameResult.playerBRatingAlteration", target = "playerScoreB.ratingAlteration")
     public abstract Game entityToDto(GameEntity gameEntity);
-    @Mapping(source = "tournamentRef", target = "tournament")
+    @Mapping(source = "locationRef", target = "location")
     @Mapping(source = "playerScoreA.playerRef", target = "playerA")
     @Mapping(source = "playerScoreB.playerRef", target = "playerB")
     @Mapping(source = "winnerId", target = "gameResult.winnerId")

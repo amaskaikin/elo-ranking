@@ -29,8 +29,8 @@ public class GameEntity {
     private PlayerEntity playerB;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament_id", nullable = false)
-    private TournamentEntity tournament;
+    @JoinColumn(name = "location_id", nullable = false)
+    private LocationEntity location;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "result_id", nullable = false)
