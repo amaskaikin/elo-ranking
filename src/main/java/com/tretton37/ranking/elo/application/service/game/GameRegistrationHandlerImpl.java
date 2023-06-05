@@ -3,7 +3,7 @@ package com.tretton37.ranking.elo.application.service.game;
 import com.tretton37.ranking.elo.adapter.persistence.GameGateway;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
+import com.tretton37.ranking.elo.domain.service.calculator.EloCalculatorService;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;

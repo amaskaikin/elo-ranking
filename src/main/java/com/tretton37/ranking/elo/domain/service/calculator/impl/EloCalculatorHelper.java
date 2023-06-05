@@ -1,4 +1,4 @@
-package com.tretton37.ranking.elo.application.utils;
+package com.tretton37.ranking.elo.domain.service.calculator.impl;
 
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.calculator.ActualScore;

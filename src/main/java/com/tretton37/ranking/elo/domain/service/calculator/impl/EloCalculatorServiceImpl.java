@@ -1,9 +1,8 @@
-package com.tretton37.ranking.elo.application.service.calculator;
+package com.tretton37.ranking.elo.domain.service.calculator.impl;
 
-import com.tretton37.ranking.elo.application.utils.EloCalculatorHelper;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
+import com.tretton37.ranking.elo.domain.service.calculator.EloCalculatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

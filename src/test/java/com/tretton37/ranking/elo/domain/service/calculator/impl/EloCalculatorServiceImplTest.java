@@ -1,11 +1,12 @@
-package com.tretton37.ranking.elo.application.service.calculator;
+package com.tretton37.ranking.elo.domain.service.calculator.impl;
 
 import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.model.calculator.ActualScore;
-import com.tretton37.ranking.elo.application.utils.EloCalculatorHelper;
+import com.tretton37.ranking.elo.domain.service.calculator.impl.EloCalculatorHelper;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
+import com.tretton37.ranking.elo.domain.service.calculator.impl.EloCalculatorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
