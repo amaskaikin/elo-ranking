@@ -53,6 +53,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public Collection<Player> findAllByIds(Collection<UUID> ids) {
+        return playerGateway.find(ids);
+    }
+
+    @Override
     public Player create(Player player) {
         if (playerGateway.findByEmail(player.getEmail()) != null) {
             throw new EntityAlreadyExistsException(ErrorDetails.ENTITY_ALREADY_EXISTS,

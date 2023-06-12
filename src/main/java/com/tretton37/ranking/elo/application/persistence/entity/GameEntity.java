@@ -1,5 +1,6 @@
 package com.tretton37.ranking.elo.application.persistence.entity;
 
+import com.tretton37.ranking.elo.application.persistence.entity.tournament.TournamentMatchEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,6 @@ import java.util.UUID;
 @Table(name = "game")
 public class GameEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
@@ -36,6 +36,9 @@ public class GameEntity {
     @JoinColumn(name = "result_id", nullable = false)
     private GameResultEntity gameResult;
 
-    private LocalDateTime playedWhen;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_match_id")
+    private TournamentMatchEntity tournamentMatch;
 
+    private LocalDateTime playedWhen;
 }

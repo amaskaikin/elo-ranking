@@ -1,6 +1,7 @@
 package com.tretton37.ranking.elo.adapter.mappers;
 
 import com.tretton37.ranking.elo.adapter.mappers.helpers.JsonNullableWrapper;
+import com.tretton37.ranking.elo.adapter.mappers.tournament.TournamentMapper;
 import com.tretton37.ranking.elo.application.persistence.entity.AchievementEntity;
 import com.tretton37.ranking.elo.application.persistence.entity.PlayerEntity;
 import com.tretton37.ranking.elo.domain.model.Achievement;
@@ -22,7 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // disable builder for Mapstruct as Lombok @Builder conflicts with Mapstruct @AfterMapping
-@Mapper(componentModel = "spring", uses = {LocationMapper.class}, builder = @Builder(disableBuilder = true))
+@Mapper(componentModel = "spring", uses = {LocationMapper.class, TournamentMapper.class},
+        builder = @Builder(disableBuilder = true))
 public abstract class PlayerMapper {
     @Autowired
     protected AchievementMapper achievementMapper;

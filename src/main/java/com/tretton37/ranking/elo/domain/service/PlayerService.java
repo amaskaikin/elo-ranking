@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface PlayerService {
     Page<Player> list(PlayerFilteringCriteria filteringCriteria, Pageable pageable);
     Collection<Player> find(PlayerFilteringCriteria filteringCriteria);
+    Collection<Player> findAllByIds(Collection<UUID> ids);
     Player findById(UUID uuid);
     Player create(Player player);
     void bulkCreate(Collection<Player> players);

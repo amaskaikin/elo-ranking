@@ -44,8 +44,8 @@ public class GameServiceImpl implements GameService {
                 ErrorDetails.ENTITY_NOT_FOUND, "Game is not found by id: " + id));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public Game register(Game game) {
         return gameLifecycleManager.register(game);
     }
