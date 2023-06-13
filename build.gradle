@@ -33,7 +33,7 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
-def versionImage = 'latest-native'
+def versionImage = 'latest-native-trnmt'
 
 tasks.named('test') {
 	useJUnitPlatform()
