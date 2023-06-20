@@ -3,6 +3,7 @@ package com.tretton37.ranking.elo.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonMerge;
+import com.tretton37.ranking.elo.domain.model.tournament.Tournament;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +36,7 @@ public class Player {
     private Location locationRef;
     @Valid
     private JsonNullable<Collection<Achievement>> achievements;
+    private Collection<Tournament> tournaments;
     private Integer rating;
     private Double winRate;
     private LocalDateTime registeredWhen;

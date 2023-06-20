@@ -5,7 +5,7 @@ import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
 import com.tretton37.ranking.elo.domain.model.PlayerScore;
-import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
+import com.tretton37.ranking.elo.domain.service.calculator.EloCalculatorService;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;
 import org.junit.jupiter.api.BeforeEach;

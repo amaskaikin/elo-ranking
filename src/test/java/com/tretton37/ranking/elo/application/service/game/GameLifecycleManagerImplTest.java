@@ -5,6 +5,7 @@ import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.achievement.AutoAchievementManager;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
+import com.tretton37.ranking.elo.domain.service.tournament.TournamentHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,8 @@ public class GameLifecycleManagerImplTest {
     private GameRegistrationHandler gameRegistrationHandler;
     @Mock
     private AutoAchievementManager autoAchievementManager;
+    @Mock
+    private TournamentHandler tournamentHandler;
 
     @InjectMocks
     private GameLifecycleManagerImpl gameLifecycleManager;
@@ -53,5 +56,6 @@ public class GameLifecycleManagerImplTest {
         verify(playerService).findById(playerBId);
         verify(gameRegistrationHandler).init(eq(game), eq(playerA), eq(playerB));
         verify(autoAchievementManager).evaluateAchievements(playerA, playerB);
+        verify(tournamentHandler).evaluate(game);
     }
 }

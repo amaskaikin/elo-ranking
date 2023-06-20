@@ -52,7 +52,7 @@ public class PlayerServiceImplTest {
     @Test
     public void testList() {
         PlayerFilteringCriteria filteringCriteria =
-                new PlayerFilteringCriteria(UUID.randomUUID(), 1, null, null);
+                new PlayerFilteringCriteria(UUID.randomUUID(), 1, null, null, null);
 
         playerService.list(filteringCriteria, Pageable.unpaged());
 
@@ -62,7 +62,7 @@ public class PlayerServiceImplTest {
     @Test
     public void testFind() {
         PlayerFilteringCriteria filteringCriteria =
-                new PlayerFilteringCriteria(UUID.randomUUID(), null, "test@mail.com", "An Ma");
+                new PlayerFilteringCriteria(UUID.randomUUID(), null, "test@mail.com", "An Ma", null);
 
         playerService.find(filteringCriteria);
 

@@ -69,7 +69,7 @@ public class PlayerController {
                                            @RequestParam(required = false) UUID locationId,
                                            @RequestParam(required = false) Integer minGamesPlayed) {
         return new PageResponse<>(playerService.list(
-                new PlayerFilteringCriteria(locationId, minGamesPlayed, null, null), page));
+                new PlayerFilteringCriteria(locationId, minGamesPlayed, null, null, null), page));
     }
 
     @Operation(summary = "Find players by specified criteria")
@@ -86,7 +86,7 @@ public class PlayerController {
     public Collection<Player> findPlayers(@RequestParam(required = false) UUID locationId,
                                           @RequestParam(required = false) String email,
                                           @RequestParam(required = false) String name) {
-        return playerService.find(new PlayerFilteringCriteria(locationId, null, email, name));
+        return playerService.find(new PlayerFilteringCriteria(locationId, null, email, name, null));
     }
 
     @ApiResponses(value = {

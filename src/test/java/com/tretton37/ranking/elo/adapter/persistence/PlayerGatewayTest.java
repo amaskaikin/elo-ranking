@@ -49,7 +49,7 @@ public class PlayerGatewayTest {
     @Test
     public void testFind_withPageable() {
         PlayerFilteringCriteria filteringCriteria =
-                new PlayerFilteringCriteria(UUID.randomUUID(), 1, null, null);
+                new PlayerFilteringCriteria(UUID.randomUUID(), 1, null, null, null);
         doReturn(pageEntityMock).when(playerRepository)
                 .findAll(any(Specification.class), any(Pageable.class));
         doReturn(new PageImpl<>(Collections.singletonList(mock(Player.class))))
@@ -65,7 +65,7 @@ public class PlayerGatewayTest {
     @Test
     public void testFind() {
         PlayerFilteringCriteria filteringCriteria =
-                new PlayerFilteringCriteria(UUID.randomUUID(), null, "test@mail.com", "An Ma");
+                new PlayerFilteringCriteria(UUID.randomUUID(), null, "test@mail.com", "An Ma", null);
         PlayerEntity entityMock = mock(PlayerEntity.class);
         doReturn(Collections.singletonList(entityMock))
                 .when(playerRepository).findAll(any(Specification.class));

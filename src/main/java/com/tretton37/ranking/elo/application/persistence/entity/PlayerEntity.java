@@ -1,5 +1,6 @@
 package com.tretton37.ranking.elo.application.persistence.entity;
 
+import com.tretton37.ranking.elo.application.persistence.entity.tournament.TournamentEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,6 +49,12 @@ public class PlayerEntity {
             joinColumns = @JoinColumn(name = "player_id"),
             inverseJoinColumns = @JoinColumn(name = "achievement_id"))
     private Set<AchievementEntity> achievements;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "player_tournament",
+            joinColumns = @JoinColumn(name = "player_id"),
+            inverseJoinColumns = @JoinColumn(name = "tournament_id"))
+    private Collection<TournamentEntity> tournaments;
 
     private LocalDateTime registeredWhen;
 

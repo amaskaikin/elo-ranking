@@ -22,6 +22,10 @@ public class Game {
     private Location locationRef;
     private UUID winnerId;
     private LocalDateTime playedWhen;
+    private TournamentDetails tournamentDetails;
+
+    @JsonIgnore
+    private UUID gameResultId;
 
     @JsonIgnore
     public UUID getPlayerIdA() {
@@ -31,5 +35,13 @@ public class Game {
     @JsonIgnore
     public UUID getPlayerIdB() {
         return playerScoreB.getPlayerRef().getId();
+    }
+
+    @Data
+    @ToString
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class TournamentDetails {
+        private UUID tournamentId;
+        private UUID matchId;
     }
 }

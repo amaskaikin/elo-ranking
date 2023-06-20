@@ -1,4 +1,4 @@
-package com.tretton37.ranking.elo.domain.service;
+package com.tretton37.ranking.elo.domain.service.calculator;
 
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;

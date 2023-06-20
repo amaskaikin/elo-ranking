@@ -39,6 +39,13 @@ public class PlayerGateway {
                 .toList();
     }
 
+    public Collection<Player> find(Collection<UUID> ids) {
+        return playerRepository.findAllById(ids)
+                .stream()
+                .map(playerMapper::entityToDto)
+                .toList();
+    }
+
     public Page<Player> find(PlayerFilteringCriteria filteringCriteria, Pageable pageable) {
         return playerRepository.findAll(PlayerSpecificationBuilder
                         .forCriteria(filteringCriteria)

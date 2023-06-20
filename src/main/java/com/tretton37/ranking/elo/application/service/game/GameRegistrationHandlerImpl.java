@@ -3,7 +3,7 @@ package com.tretton37.ranking.elo.application.service.game;
 import com.tretton37.ranking.elo.adapter.persistence.GameGateway;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
-import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
+import com.tretton37.ranking.elo.domain.service.calculator.EloCalculatorService;
 import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;
@@ -42,6 +42,7 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
         gameInitValidator.validate(game);
 
         game.setId(UUID.randomUUID());
+        game.setGameResultId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
         updatePlayersRatings(game, playerA, playerB);
