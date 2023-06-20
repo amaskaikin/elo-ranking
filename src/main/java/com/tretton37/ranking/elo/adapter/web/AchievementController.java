@@ -29,7 +29,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/achievement")
 public class AchievementController {
-
     private final AchievementService achievementService;
 
     @Autowired

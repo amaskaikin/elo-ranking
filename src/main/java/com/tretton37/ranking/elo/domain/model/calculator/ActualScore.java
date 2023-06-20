@@ -15,7 +15,6 @@ public class ActualScore {
 
     public static class ActualScoreCalculator {
         private final GameResult result;
-
         private final ActualScore actualScore;
 
         private ActualScoreCalculator(GameResult result) {

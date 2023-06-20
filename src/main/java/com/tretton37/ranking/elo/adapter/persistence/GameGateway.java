@@ -18,7 +18,6 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class GameGateway {
-
     private final GameRepository gameRepository;
     private final GameMapper mapper;
 

@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class GameServiceImpl implements GameService {
-
     private final GameGateway gameGateway;
     private final GameLifecycleManager gameLifecycleManager;
 
@@ -44,11 +44,10 @@ public class GameServiceImpl implements GameService {
                 ErrorDetails.ENTITY_NOT_FOUND, "Game is not found by id: " + id));
     }
 
+    @Transactional
     @Override
     public Game register(Game game) {
-        gameLifecycleManager.register(game);
-
-        return gameGateway.save(game);
+        return gameLifecycleManager.register(game);
     }
 
     @Override

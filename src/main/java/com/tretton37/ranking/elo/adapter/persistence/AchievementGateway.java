@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class AchievementGateway {
-
     private final AchievementRepository achievementRepository;
     private final AchievementMapper mapper;
 

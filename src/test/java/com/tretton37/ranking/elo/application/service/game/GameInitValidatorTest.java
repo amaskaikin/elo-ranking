@@ -1,7 +1,6 @@
 package com.tretton37.ranking.elo.application.service.game;
 
 import com.tretton37.ranking.elo.domain.model.Game;
-import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.PlayerRef;
 import com.tretton37.ranking.elo.domain.model.PlayerScore;
 import com.tretton37.ranking.elo.domain.model.exception.RequestConsistencyException;
@@ -13,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class GameInitValidatorTest {
@@ -31,7 +29,7 @@ public class GameInitValidatorTest {
         game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerBId).build(), 5, null));
         game.setWinnerId(playerAId);
 
-        validator.validate(game, mock(Player.class), mock(Player.class));
+        validator.validate(game);
     }
 
     @Test
@@ -44,12 +42,10 @@ public class GameInitValidatorTest {
         game.setPlayerScoreB(new PlayerScore(PlayerRef.builder().id(playerBId).build(), 5, null));
         game.setWinnerId(playerBId);
 
-        assertThrows(RequestConsistencyException.class, () ->
-                validator.validate(game, mock(Player.class), mock(Player.class)));
+        assertThrows(RequestConsistencyException.class, () -> validator.validate(game));
 
         game.getPlayerScoreB().setScore(11);
         game.setWinnerId(playerAId);
-        assertThrows(RequestConsistencyException.class, () ->
-                validator.validate(game, mock(Player.class), mock(Player.class)));
+        assertThrows(RequestConsistencyException.class, () -> validator.validate(game));
     }
 }

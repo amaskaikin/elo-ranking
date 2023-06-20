@@ -1,6 +1,5 @@
 package com.tretton37.ranking.elo.application.utils;
 
-import com.tretton37.ranking.elo.domain.model.calculator.ActualScore;
 import com.tretton37.ranking.elo.domain.model.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,21 +17,21 @@ public class EloCalculatorHelperTest {
 
     @Test
     public void testCalculateActualScore() {
-        UUID playerIdA = UUID.randomUUID();
-        UUID playerIdB = UUID.randomUUID();
+        var playerIdA = UUID.randomUUID();
+        var playerIdB = UUID.randomUUID();
 
-        Player playerA = Player.builder().id(playerIdA).build();
-        Player playerB = Player.builder().id(playerIdB).build();
+        var playerA = Player.builder().id(playerIdA).build();
+        var playerB = Player.builder().id(playerIdB).build();
 
-        ActualScore resultAWin = eloCalculatorHelper.calculateActualScore(playerA, playerB, playerIdA);
+        var resultAWin = eloCalculatorHelper.calculateActualScore(playerA, playerB, playerIdA);
         assertEquals(1.0, resultAWin.getPlayerAScore());
         assertEquals(0.0, resultAWin.getPlayerBScore());
 
-        ActualScore resultBWin = eloCalculatorHelper.calculateActualScore(playerA, playerB, playerIdB);
+        var resultBWin = eloCalculatorHelper.calculateActualScore(playerA, playerB, playerIdB);
         assertEquals(0.0, resultBWin.getPlayerAScore());
         assertEquals(1.0, resultBWin.getPlayerBScore());
 
-        ActualScore draw = eloCalculatorHelper.calculateActualScore(playerA, playerB, null);
+        var draw = eloCalculatorHelper.calculateActualScore(playerA, playerB, null);
         assertEquals(0.5, draw.getPlayerAScore());
         assertEquals(0.5, draw.getPlayerBScore());
     }

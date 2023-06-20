@@ -10,7 +10,6 @@ import java.util.UUID;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 public class PlayerSpecificationBuilder {
-
     private final PlayerFilteringCriteria filteringCriteria;
 
     public static PlayerSpecificationBuilder forCriteria(PlayerFilteringCriteria playerFilteringCriteria) {

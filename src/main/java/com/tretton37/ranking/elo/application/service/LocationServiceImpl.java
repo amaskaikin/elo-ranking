@@ -16,7 +16,6 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class LocationServiceImpl implements LocationService {
-
     private final LocationGateway locationGateway;
 
     @Autowired

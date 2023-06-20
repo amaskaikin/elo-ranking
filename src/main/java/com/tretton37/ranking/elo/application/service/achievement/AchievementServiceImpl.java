@@ -16,7 +16,6 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class AchievementServiceImpl implements AchievementService {
-
     private final AchievementGateway achievementGateway;
 
     @Autowired
