@@ -42,6 +42,7 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
         gameInitValidator.validate(game);
 
         game.setId(UUID.randomUUID());
+        game.setGameResultId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
         updatePlayersRatings(game, playerA, playerB);

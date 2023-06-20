@@ -2,8 +2,6 @@ package com.tretton37.ranking.elo.application.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,6 @@ import java.util.UUID;
 @Table(name = "game_result")
 public class GameResultEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private Integer playerAScore;

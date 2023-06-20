@@ -25,6 +25,9 @@ public class Game {
     private TournamentDetails tournamentDetails;
 
     @JsonIgnore
+    private UUID gameResultId;
+
+    @JsonIgnore
     public UUID getPlayerIdA() {
         return playerScoreA.getPlayerRef().getId();
     }
