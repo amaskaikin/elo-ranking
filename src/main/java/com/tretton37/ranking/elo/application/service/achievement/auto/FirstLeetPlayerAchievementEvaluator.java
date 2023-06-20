@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 @Component
@@ -28,7 +27,7 @@ public class FirstLeetPlayerAchievementEvaluator implements AutoAchievement {
     @Override
     public void apply(Player player) {
         if (player.getRating() >= LEET_THRESHOLD) {
-            Achievement firstLeetPlayer = loadAchievement();
+            var firstLeetPlayer = loadAchievement();
             if (CollectionUtils.isEmpty(firstLeetPlayer.getPlayerIds())) {
                 log.info("evaluate: Player {} is eligible for Achievement {}, assign",
                         player.getEmail(), firstLeetPlayer);
@@ -42,7 +41,7 @@ public class FirstLeetPlayerAchievementEvaluator implements AutoAchievement {
     }
 
     private void addAchievement(Achievement achievement, Player player) {
-        Collection<Achievement> achievements = player.getAchievements().orElse(new HashSet<>());
+        var achievements = player.getAchievements().orElse(new HashSet<>());
         achievements.add(achievement);
     }
 

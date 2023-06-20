@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class LocationGateway {
-
     private final LocationRepository locationRepository;
     private final LocationMapper mapper;
 

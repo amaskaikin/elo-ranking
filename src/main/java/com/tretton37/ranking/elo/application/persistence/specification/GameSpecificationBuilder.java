@@ -13,7 +13,6 @@ import static org.springframework.data.jpa.domain.Specification.allOf;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 public class GameSpecificationBuilder {
-
     private final GameSearchCriteria gameSearchCriteria;
 
     public static GameSpecificationBuilder forCriteria(GameSearchCriteria gameSearchCriteria) {

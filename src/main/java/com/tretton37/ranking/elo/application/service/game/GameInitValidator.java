@@ -1,7 +1,6 @@
 package com.tretton37.ranking.elo.application.service.game;
 
 import com.tretton37.ranking.elo.domain.model.Game;
-import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.model.exception.ErrorDetails;
 import com.tretton37.ranking.elo.domain.model.exception.RequestConsistencyException;
 import com.tretton37.ranking.elo.domain.service.game.GameValidator;
@@ -13,21 +12,21 @@ import java.util.UUID;
 public class GameInitValidator implements GameValidator {
 
     @Override
-    public void validate(Game game, Player initiator, Player opponent) {
+    public void validate(Game game) {
         validateWinnerAndScoresConsistency(game);
     }
 
     private void validateWinnerAndScoresConsistency(Game game) {
         var playerAScore = game.getPlayerScoreA().getScore();
         var playerBScore = game.getPlayerScoreB().getScore();
-        UUID winnerId = game.getWinnerId();
+        var winnerId = game.getWinnerId();
 
         if (playerAScore != null && playerBScore != null) {
             if (playerAScore > playerBScore) {
-                verifyWinnerId(winnerId, game.getPlayerScoreA().getPlayerRef().getId());
+                verifyWinnerId(winnerId, game.getPlayerIdA());
             }
             if (playerBScore > playerAScore) {
-                verifyWinnerId(winnerId, game.getPlayerScoreB().getPlayerRef().getId());
+                verifyWinnerId(winnerId, game.getPlayerIdB());
             }
         }
     }

@@ -1,16 +1,19 @@
 package com.tretton37.ranking.elo.application.service.game;
 
+import com.tretton37.ranking.elo.adapter.persistence.GameGateway;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
 import com.tretton37.ranking.elo.domain.service.EloCalculatorService;
+import com.tretton37.ranking.elo.domain.service.PlayerService;
 import com.tretton37.ranking.elo.domain.service.game.GameRegistrationHandler;
+import com.tretton37.ranking.elo.domain.service.game.GameValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,30 +21,46 @@ import java.util.UUID;
 public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
     @Value("${elo.ranking.threshold-rank}")
     private Integer thresholdRank;
+    private final GameValidator gameInitValidator;
+    private final GameGateway gameGateway;
+    private final PlayerService playerService;
     private final EloCalculatorService eloCalculatorService;
 
     @Autowired
-    public GameRegistrationHandlerImpl(EloCalculatorService eloCalculatorService) {
+    public GameRegistrationHandlerImpl(GameValidator gameInitValidator,
+                                       GameGateway gameGateway,
+                                       PlayerService playerService,
+                                       EloCalculatorService eloCalculatorService) {
+        this.gameInitValidator = gameInitValidator;
+        this.gameGateway = gameGateway;
+        this.playerService = playerService;
         this.eloCalculatorService = eloCalculatorService;
     }
 
     @Override
-    public void init(Game game) {
+    public Game init(Game game) {
+        gameInitValidator.validate(game);
+
         game.setId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
+
+        return gameGateway.save(game);
     }
 
+    // ToDo: Move to separate service as updating ratings may be required not only during initiation
     @Override
-    public void captureRatingAlterations(Player playerA, Player playerB, Game game) {
-        Map<Player, Integer> newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
+    public void updatePlayersRatings(Game game, Player playerA, Player playerB) {
+        var newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
         newRatings.forEach((player, newRating) -> {
-            trackResultRatingAlteration(player, newRating, game);
-            updatePlayer(player, newRating, game);
+            trackRatingAlteration(player, newRating, game);
+            updatePlayerStats(player, newRating, game);
         });
+
+        playerService.deltaUpdateBatch(List.of(playerA, playerB));
     }
 
-    private void trackResultRatingAlteration(Player player, Integer newRating, Game game) {
+    private void trackRatingAlteration(Player player, Integer newRating, Game game) {
         var playerResultA = game.getPlayerScoreA();
         var playerResultB = game.getPlayerScoreB();
         if (player.getId().equals(playerResultA.getPlayerRef().getId())) {
@@ -51,7 +70,7 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
         }
     }
 
-    private void updatePlayer(Player player, int rating, Game game) {
+    private void updatePlayerStats(Player player, int rating, Game game) {
         player.countGame(player.getId().equals(game.getWinnerId()));
         player.setRating(rating);
         if (rating > thresholdRank) {

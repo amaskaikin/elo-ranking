@@ -74,6 +74,8 @@ public abstract class PlayerMapper {
             player.setWinRate(BigDecimal.valueOf((double) player.getGamesWon() / player.getGamesPlayed())
                     .setScale(2, RoundingMode.HALF_UP)
                     .doubleValue());
+        } else {
+            player.setWinRate(0.0);
         }
     }
 }

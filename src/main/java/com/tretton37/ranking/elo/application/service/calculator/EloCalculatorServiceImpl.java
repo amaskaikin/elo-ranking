@@ -1,6 +1,5 @@
 package com.tretton37.ranking.elo.application.service.calculator;
 
-import com.tretton37.ranking.elo.domain.model.calculator.ActualScore;
 import com.tretton37.ranking.elo.application.utils.EloCalculatorHelper;
 import com.tretton37.ranking.elo.domain.model.Game;
 import com.tretton37.ranking.elo.domain.model.Player;
@@ -29,7 +28,7 @@ public class EloCalculatorServiceImpl implements EloCalculatorService {
         log.debug("updateEloRatings: Calculating new rating for PlayerA: {} and PlayerB: {}. " +
                 "game: {}", playerA, playerB, game);
 
-        ActualScore actualScore = getCalculatorHelper().calculateActualScore(playerA, playerB,
+        var actualScore = getCalculatorHelper().calculateActualScore(playerA, playerB,
                 game.getWinnerId());
         double expectedScoreA = calculateExpectedScore(playerA.getRating(), playerB.getRating());
         double expectedScoreB = calculateExpectedScore(playerB.getRating(), playerA.getRating());

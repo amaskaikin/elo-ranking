@@ -10,7 +10,7 @@ import java.util.UUID;
 @Slf4j
 public class EloCalculatorHelper {
     public ActualScore calculateActualScore(Player playerA, Player playerB, UUID winnerId) {
-        GameResult gameResult = resolveGameResult(playerA.getId(), playerB.getId(), winnerId);
+        var gameResult = resolveGameResult(playerA.getId(), playerB.getId(), winnerId);
         log.debug("calculateActualScore: Resolved GameResult: {}", gameResult);
 
         return ActualScore.forResult(gameResult).calculate();

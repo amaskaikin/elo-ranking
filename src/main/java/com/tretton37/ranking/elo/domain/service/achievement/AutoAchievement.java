@@ -5,6 +5,5 @@ import com.tretton37.ranking.elo.domain.model.Player;
 
 public interface AutoAchievement {
     void apply(Player player);
-
     AchievementDef getAchievementDef();
 }
