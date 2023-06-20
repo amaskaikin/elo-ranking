@@ -67,7 +67,7 @@ public class GameRegistrationHandlerImplTest {
         doNothing().when(gameInitValidator).validate(any(Game.class));
         doReturn(game).when(gameGateway).save(game);
 
-        gameRegistrationHandler.init(game);
+        gameRegistrationHandler.init(game, mock(Player.class), mock(Player.class));
 
         verify(game).setPlayedWhen(any(LocalDateTime.class));
         verify(game).setWinnerId(playerAId);
@@ -76,7 +76,7 @@ public class GameRegistrationHandlerImplTest {
     }
 
     @Test
-    public void testCaptureRatingAlterations() {
+    public void testInit_ratingAlterations() {
         var playerIdA = UUID.randomUUID();
         var playerIdB = UUID.randomUUID();
         var playerA = Player.builder().id(playerIdA).rating(1000).build();
@@ -91,7 +91,7 @@ public class GameRegistrationHandlerImplTest {
         when(eloCalculatorService.calculateRatings(playerA, playerB, game))
                 .thenReturn(Map.of(playerA, 1020, playerB, 980));
 
-        gameRegistrationHandler.updatePlayersRatings(game, playerA, playerB);
+        gameRegistrationHandler.init(game, playerA, playerB);
 
         assertEquals(20, game.getPlayerScoreA().getRatingAlteration());
         assertEquals(-20, game.getPlayerScoreB().getRatingAlteration());

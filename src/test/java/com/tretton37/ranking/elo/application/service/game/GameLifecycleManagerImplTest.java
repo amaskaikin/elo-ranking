@@ -45,14 +45,13 @@ public class GameLifecycleManagerImplTest {
         when(playerService.findById(playerAId)).thenReturn(playerA);
         when(playerService.findById(playerBId)).thenReturn(playerB);
         doNothing().when(autoAchievementManager).evaluateAchievements(playerA, playerB);
-        doReturn(game).when(gameRegistrationHandler).init(game);
+        doReturn(game).when(gameRegistrationHandler).init(game, playerA, playerB);
 
         var registered = gameLifecycleManager.register(game);
 
         verify(playerService).findById(playerAId);
         verify(playerService).findById(playerBId);
-        verify(gameRegistrationHandler).init(eq(game));
-        verify(gameRegistrationHandler).updatePlayersRatings(eq(registered), eq(playerA), eq(playerB));
+        verify(gameRegistrationHandler).init(eq(game), eq(playerA), eq(playerB));
         verify(autoAchievementManager).evaluateAchievements(playerA, playerB);
     }
 }

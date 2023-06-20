@@ -38,19 +38,19 @@ public class GameRegistrationHandlerImpl implements GameRegistrationHandler {
     }
 
     @Override
-    public Game init(Game game) {
+    public Game init(Game game, Player playerA, Player playerB) {
         gameInitValidator.validate(game);
 
         game.setId(UUID.randomUUID());
         game.setPlayedWhen(LocalDateTime.now());
         setWinner(game);
+        updatePlayersRatings(game, playerA, playerB);
 
         return gameGateway.save(game);
     }
 
     // ToDo: Move to separate service as updating ratings may be required not only during initiation
-    @Override
-    public void updatePlayersRatings(Game game, Player playerA, Player playerB) {
+    private void updatePlayersRatings(Game game, Player playerA, Player playerB) {
         var newRatings = eloCalculatorService.calculateRatings(playerA, playerB, game);
         newRatings.forEach((player, newRating) -> {
             trackRatingAlteration(player, newRating, game);

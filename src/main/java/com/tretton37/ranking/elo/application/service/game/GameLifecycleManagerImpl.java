@@ -28,8 +28,7 @@ public class GameLifecycleManagerImpl implements GameLifecycleManager {
         var playerA = playerService.findById(game.getPlayerIdA());
         var playerB = playerService.findById(game.getPlayerIdB());
 
-        Game created = gameRegistrationHandler.init(game);
-        gameRegistrationHandler.updatePlayersRatings(created, playerA, playerB);
+        Game created = gameRegistrationHandler.init(game, playerA, playerB);
         autoAchievementManager.evaluateAchievements(playerA, playerB);
 
         return created;
